@@ -27,17 +27,17 @@
 <body>
   <header class="navbar">
     <img src="assets\images\logo-large.svg" alt="logo">
-    <span style="display: flex; align-items: center; "> <img src="assets\images\icon-personal-best.svg" alt="Cup">
-      Personal best: </span>
+    <p style="display: flex; align-items: center; "> <img src="assets\images\icon-personal-best.svg" alt="Cup">
+      Personal best: <span style="color: hsl(0, 0%, 100%);" id=best-wmp>0 WPM</span> </p>
   </header>
   <main>
     <div class="game-settings">
-      <div class="game-stats">
-        WPM:
-        Accuracy:
-        Time:
-      </div>
-      <div class="game-options">
+      <section class="game-stats">
+        WPM: <span id="wpm">0</span>
+        Accuracy:<span id="accuracy">100%</span>
+        Time: <span id="time">60s</span>
+      </section>
+      <section class="game-options">
         <div class="difficulty">
           Difficulty:
           <button id="easy">Easy</button>
@@ -49,8 +49,14 @@
           <button class="timed-button">Timed (60s)</button>
           <button class="passage-button">Passage</button>
         </div>
-      </div>
+      </section>
     </div>
+    <section class="typing-area">
+      <button class="start-test"> Start typing test</button>
+      <p>Or click the text and start typing</p>
+    </section>
+    <button id="reset-button"> Restart Test</button>
+
   </main>
 
 
@@ -58,28 +64,10 @@
 
 
 
-  <!-- Passage -->
-
-  Start Typing Test
-  Or click the text and start typing
-
-  <!-- Test Complete Start -->
-
-  Test Complete!
-  Solid run. Keep pushing to beat your high score.
-
-  WPM: <!-- WPM -->
-  Accuracy: <!-- Accuracy -->
-  Characters: <!-- Correct/Incorrect -->
-
-  Go Again
-
-  <!-- Test Complete End -->
-
-  <div class="attribution">
+  <footer class="attribution">
     Challenge by <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>.
     Coded by <a href="#">Javnievic</a>.
-  </div>
+  </footer>
   <script defer src="script.js"></script>
 </body>
 

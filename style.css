@@ -10,7 +10,6 @@ body {
     
 }
 
-
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -36,6 +35,46 @@ body {
 button {
     background-color: transparent;
     color: hsl(0, 0%, 100%); 
+    border: 1px solid hsl(240, 1%, 59%);; 
+    padding: 4px 8px;
     border-radius: 5px; 
-    border-color: hsl(240, 1%, 59%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    color: hsl(210, 100%, 65%); 
+    border-color: hsl(210, 100%, 65%); 
+
+}
+
+
+.typing-area {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.typing-area p {
+    color: hsl(0, 0%, 100%); 
+}
+
+.start-test {
+    background-color: hsl(214, 100%, 55%);
+    color: hsl(0, 0%, 100%);
+    border: none; 
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+.start-test:hover {
+    background-color: hsl(210, 100%, 65%);
+    color: hsl(0, 0%, 100%);
+}
+
+.start-test:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
