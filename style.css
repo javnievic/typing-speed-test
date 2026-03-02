@@ -63,7 +63,7 @@ body {
     color: hsl(0, 0%, 100%); 
 }
 
-.start-test {
+.start-test-btn {
     background-color: hsl(214, 100%, 55%);
     color: hsl(0, 0%, 100%);
     font-size: 1rem;
@@ -73,12 +73,12 @@ body {
     cursor: pointer;
 }
 
-.start-test:hover {
+.start-test-btn:hover {
     background-color: hsl(210, 100%, 65%);
     color: hsl(0, 0%, 100%);
 }
 
-.start-test:active {
+.start-test-btn:active {
   transform: translateY(0);
   box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
