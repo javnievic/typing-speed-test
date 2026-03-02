@@ -1,6 +1,8 @@
 let currentDifficulty = "easy"; 
 let currentMode = "timed";
 
+let ongoingTest = false; 
+
 let textsData = {}; 
 
 fetch('./data.json')
@@ -36,7 +38,16 @@ function initModeButtons() {
     })
 }
 
-
 function startTest () {
-    console.log(textsData[currentDifficulty]) 
+    const possibleTests = textsData[currentDifficulty]; 
+    const randomIndex = Math.floor(Math.random() * possibleTests.length); 
+    const randomTest = possibleTests[randomIndex]; 
+    const textDisplay = document.getElementById('text-display'); 
+    textDisplay.textContent = randomTest['text']; 
 }
+
+
+document.getElementById('start-test-btn').addEventListener('click', () => {
+    ongoingTest = true; 
+    startTest()
+})
