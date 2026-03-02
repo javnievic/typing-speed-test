@@ -40,18 +40,20 @@
       <section class="game-options">
         <div class="difficulty">
           Difficulty:
-          <button id="easy">Easy</button>
-          <button id="medium">Medium</button>
-          <button id="hard">Hard</button>
+          <button class="selection-btn active" data-difficulty="easy">Easy</button>
+          <button class="selection-btn" data-difficulty="medium">Medium</button>
+          <button class="selection-btn" data-difficulty="hard">Hard</button>
         </div>
         <div class="mode">
           Mode:
-          <button class="timed-button">Timed (60s)</button>
-          <button class="passage-button">Passage</button>
+          <button class="selection-btn">Timed (60s)</button>
+          <button class="selection-btn">Passage</button>
         </div>
       </section>
     </div>
     <section class="typing-area">
+      <p class="text-display" id="text-display"> </p>
+      <input id="typing-input"/>
       <button class="start-test"> Start typing test</button>
       <p>Or click the text and start typing</p>
     </section>
