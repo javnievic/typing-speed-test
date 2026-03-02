@@ -2,6 +2,7 @@ let currentDifficulty = "easy";
 let currentMode = "timed";
 
 let ongoingTest = false; 
+let currentSpanNumber = 0; 
 
 let textsData = {}; 
 
@@ -43,8 +44,31 @@ function startTest () {
     const randomIndex = Math.floor(Math.random() * possibleTests.length); 
     const randomTest = possibleTests[randomIndex]; 
     const textDisplay = document.getElementById('text-display'); 
-    textDisplay.textContent = randomTest['text']; 
+    textDisplay.innerHTML = ""; 
+    randomTest.text.split('').forEach(char => {
+        const span=document.createElement('span');
+        span.textContent = char; 
+        textDisplay.append(span)
+    })
+
+    currentSpanNumber = 0; 
+
 }
+
+    document.addEventListener('keydown', (e) => {
+        if (!ongoingTest) return;
+        const ignoredKeys = ['Shift', 'Alt', 'Control', 'Tab', 'CapsLock', 'Meta', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+        if (ignoredKeys.includes(e.key)) return; 
+
+        spans = document.querySelectorAll('#text-display span')
+        const currentSpan= spans[currentSpanNumber]; 
+        if(currentSpan.textContent === e.key) {
+            currentSpan.classList.add('correct'); 
+        } else {
+            currentSpan.classList.add('incorrect'); 
+        }
+        currentSpanNumber++; 
+    })
 
 
 document.getElementById('start-test-btn').addEventListener('click', () => {
