@@ -3,6 +3,7 @@ let currentMode = "timed";
 
 let ongoingTest = false; 
 let currentSpanNumber = 0; 
+let incorrectCount = 0; 
 
 let textsData = {}; 
 
@@ -50,25 +51,45 @@ function startTest () {
         span.textContent = char; 
         textDisplay.append(span)
     })
+    const spans = document.querySelectorAll('#text-display span');
+    spans[0].classList.add('active-letter'); 
 
     currentSpanNumber = 0; 
 
 }
 
-    document.addEventListener('keydown', (e) => {
-        if (!ongoingTest) return;
-        const ignoredKeys = ['Shift', 'Alt', 'Control', 'Tab', 'CapsLock', 'Meta', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
-        if (ignoredKeys.includes(e.key)) return; 
+document.addEventListener('keydown', (e) => {
+    const spans = document.querySelectorAll('#text-display span')
+    const currentSpan= spans[currentSpanNumber]; 
+    const nextSpan = spans[currentSpanNumber + 1]; 
+    const previousSpan = spans[currentSpanNumber - 1]; 
 
-        spans = document.querySelectorAll('#text-display span')
-        const currentSpan= spans[currentSpanNumber]; 
-        if(currentSpan.textContent === e.key) {
-            currentSpan.classList.add('correct'); 
-        } else {
-            currentSpan.classList.add('incorrect'); 
+    if (!ongoingTest) return;
+    const ignoredKeys = ['Shift', 'Alt', 'Control', 'Tab', 'CapsLock', 'Meta', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+    if (ignoredKeys.includes(e.key)) return; 
+
+    if (e.key === 'Backspace') {
+        if (previousSpan?.classList.contains('incorrect')) {
+            previousSpan.classList.remove('incorrect');
+            previousSpan.classList.add('active-letter');
+            currentSpan.classList.remove('active-letter'); 
+            currentSpanNumber--; 
         }
-        currentSpanNumber++; 
-    })
+        return; 
+    }
+
+    if(currentSpan.textContent === e.key) {
+        currentSpan.classList.add('correct'); 
+        currentSpan.classList.remove('active-letter'); 
+    } else {
+        currentSpan.classList.add('incorrect'); 
+        currentSpan.classList.remove('active-letter'); 
+        incorrectCount++; 
+    }
+    nextSpan?.classList.add('active-letter')
+    
+    currentSpanNumber++; 
+})
 
 
 document.getElementById('start-test-btn').addEventListener('click', () => {
