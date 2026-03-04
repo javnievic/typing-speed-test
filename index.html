@@ -39,13 +39,13 @@
           Time: <span id="time">60s</span>
         </section>
         <section class="game-options">
-          <div class="difficulty">
+          <div class="difficulty-options">
             Difficulty:
             <button class="selection-btn active" data-difficulty="easy">Easy</button>
             <button class="selection-btn" data-difficulty="medium">Medium</button>
             <button class="selection-btn" data-difficulty="hard">Hard</button>
           </div>
-          <div class="mode">
+          <div class="mode-options">
             Mode:
             <button class="selection-btn active" data-mode="timed">Timed (60s)</button>
             <button class="selection-btn" data-mode="passage">Passage</button>
@@ -54,17 +54,40 @@
       </div>
       <section class="typing-area">
         <p class="text-display" id="text-display"> </p>
-        <button class="start-test-btn" id="start-test-btn"> Start typing test</button>
-        <p>Or click the text and start typing</p>
+        <div class="start-test-container" id="start-test-container">
+          <button class="start-test-btn" id="start-test-btn"> Start typing test</button>
+          <p>Or click the text and start typing</p>
+        </div>
+
       </section>
-      <button id="reset-button"> Restart Test</button>
+      <button class="restart-test-btn hidden" id="restart-test-btn"> 
+        Restart Test
+        <img src="assets/images/icon-restart.svg" alt="Restart">
+      </button>
     </div>
 
     <div class="results-screen hidden">
-      <h2>Test results</h2>
-      <p>WPM: <span id="final-wpm"> </span> </p>
-      <p>Accuracy: <span id="final-accuracy"> </span> </p>
-      <p>Characters: <span id="TODO"> </span> </p>
+
+      <h2>Test Complete!</h2>
+      Solid run. Keep pushing to beat you high score.
+
+      <div class="result-stats-container">
+        <div class="stat-box">WPM: <span class="stat-value" id="final-wpm"> </span></div>
+        <div class="stat-box">Accuracy: <span class="stat-value" id="final-accuracy"> </span></div>
+        <div class="stat-box">
+          Characters:
+          <div>
+            <span class="stat-value" id="final-correct">0</span>
+            <span class="stat-value">/</span>
+            <span class="stat-value" id="final-incorrect">0</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="new-test-btn" id="new-test-btn">
+        Go again
+        <img style="filter: brightness(0);" src="assets\images\icon-restart.svg" alt="Restart">
+      </button>
     </div>
   </main>
 

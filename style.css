@@ -36,12 +36,23 @@ body {
     display: flex;
 }
 
+.difficulty-options {
+    display: flex;
+    gap:4px
+}
+
+.mode-options {
+    display: flex;
+    gap:4px
+}
+
 .selection-btn {
     background-color: transparent;
     color: hsl(0, 0%, 100%); 
     border: 1px solid hsl(240, 1%, 59%);; 
     padding: 4px 8px;
-    border-radius: 5px; 
+    border-radius: 5px;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
@@ -51,16 +62,21 @@ body {
     border-color: hsl(210, 100%, 65%); 
 }
 
-
 .typing-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
 }
 
 .typing-area p {
     color: hsl(240, 1%, 71%);
+}
+
+
+button {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
 }
 
 .start-test-btn {
@@ -83,14 +99,26 @@ body {
   box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
 
+.restart-test-btn {
+    background-color: hsl(0, 0%, 15%);
+    color: hsl(0, 0%, 100%);
+    font-size: 1rem;
+    border: none; 
+    padding: 12px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
 .new-test-btn {
     background-color: hsl(0, 0%, 100%);
     color: hsl(0, 0%, 7%);
     font-size: 1rem;
     border: none; 
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 12px 12px;
+    border-radius: 12px;
     cursor: pointer;
+    font-weight: 600;
 }
 
 .text-display {
@@ -114,4 +142,47 @@ body {
 
 .hidden {
     display: none; 
+}
+.results-screen {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; 
+}
+
+.result-stats-container {
+    display: flex;
+    gap: 12px
+}
+
+.stat-box {
+    display: flex; 
+    flex-direction: column;
+    border: 2px solid hsl(0, 0%, 15%);
+    width: 120px;
+    border-radius: 5px;
+    padding: 12px;
+    gap: 8px; 
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#final-wpm {
+    color: hsl(0, 0%, 100%);
+}
+.accuracy-perfect {
+    color: hsl(140, 63%, 57%); 
+}
+.accuracy-imperfect {
+    color: hsl(354, 63%, 57%);
+}
+
+#final-correct {
+    color: hsl(140, 63%, 57%);
+}
+#final-incorrect {
+    color: hsl(354, 63%, 57%);
 }

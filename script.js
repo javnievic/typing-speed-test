@@ -38,13 +38,13 @@ function initSelectionButton(classSelector, onSelect) {
 }
 
 function initDifficultyButtons() {
-    initSelectionButton('.difficulty', (btn) => {
+    initSelectionButton('.difficulty-options', (btn) => {
         currentDifficulty = btn.dataset.difficulty; 
     })
 }
 
 function initModeButtons() {
-    initSelectionButton('.mode', (btn) => {
+    initSelectionButton('.mode-options', (btn) => {
         currentMode = btn.dataset.mode; 
     })
 }
@@ -57,12 +57,16 @@ function startTest () {
     const possibleTests = textsData[currentDifficulty]; 
     const randomIndex = Math.floor(Math.random() * possibleTests.length); 
     const randomTest = possibleTests[randomIndex]; 
-    const textDisplay = document.getElementById('text-display'); 
-    textDisplay.innerHTML = ""; 
+    const textDisplayEl = document.getElementById('text-display'); 
+    const restartTestBtn = document.getElementById('restart-test-btn')
+    ongoingTest = true; 
+    textDisplayEl.innerHTML = ""; 
+
+    restartTestBtn.classList.remove('hidden'); 
     randomTest.text.split('').forEach(char => {
         const span=document.createElement('span');
         span.textContent = char; 
-        textDisplay.append(span)
+        textDisplayEl.append(span)
     })
     const spans = document.querySelectorAll('#text-display span');
     spans[0].classList.add('active-letter'); 
@@ -80,9 +84,9 @@ function startTest () {
         timeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(10 - Math.floor(elapsedTimeInSeconds), 0); 
             timeElement.textContent = `${remainingTime}s`;
-            if (remainingTime === 0) {
+            if (remainingTime === 0 && ongoingTest) {
                 finishTest(); 
             }
             
@@ -98,7 +102,20 @@ function finishTest() {
     document.querySelector('.test-screen').classList.add('hidden'); 
     document.querySelector('.results-screen').classList.remove('hidden'); 
     document.querySelector('#final-wpm').textContent = wpm;
-    document.querySelector('#final-accuracy').textContent = `${accuracy}%`; 
+
+    document.querySelector('#final-correct').textContent = typedCount - incorrectCount;
+    document.querySelector('#final-incorrect').textContent = incorrectCount;
+    
+    const finalAccuracyEl = document.querySelector('#final-accuracy'); 
+    finalAccuracyEl.textContent = `${accuracy}%`; 
+
+    finalAccuracyEl.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    if (accuracy === 100) {
+        finalAccuracyEl.classList.add('accuracy-perfect'); 
+    } else {
+        finalAccuracyEl.classList.add('accuracy-imperfect')
+    }
+
 }
 
 document.addEventListener('keydown', (e) => {
@@ -159,7 +176,24 @@ document.addEventListener('keydown', (e) => {
 })
 
 
+/*
+Event listeners for buttons
+*/
+
+// Start test button on the start screen
 document.getElementById('start-test-btn').addEventListener('click', () => {
-    ongoingTest = true; 
+    document.getElementById('start-test-container').classList.add('hidden'); 
     startTest()
+})
+
+// Restart test button on the test screen
+document.getElementById('restart-test-btn').addEventListener('click',() => {
+    if (ongoingTest) startTest(); 
+})
+
+// New test button on the results screen
+document.getElementById('new-test-btn').addEventListener('click', () => {
+    document.querySelector('.results-screen').classList.add('hidden'); 
+    document.querySelector('.test-screen').classList.remove('hidden');
+    document.getElementById('start-test-container').classList.remove('hidden'); 
 })
