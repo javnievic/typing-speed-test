@@ -31,33 +31,41 @@
       Personal best: <span style="color: hsl(0, 0%, 100%);" id=best-wmp>0 WPM</span> </p>
   </header>
   <main>
-    <div class="game-settings">
-      <section class="game-stats">
-        WPM: <span id="wpm">0</span>
-        Accuracy:<span id="accuracy">100%</span>
-        Time: <span id="time">60s</span>
+    <div class="test-screen">
+      <div class="game-settings">
+        <section class="game-stats">
+          WPM: <span id="wpm">0</span>
+          Accuracy:<span id="accuracy">100%</span>
+          Time: <span id="time">60s</span>
+        </section>
+        <section class="game-options">
+          <div class="difficulty">
+            Difficulty:
+            <button class="selection-btn active" data-difficulty="easy">Easy</button>
+            <button class="selection-btn" data-difficulty="medium">Medium</button>
+            <button class="selection-btn" data-difficulty="hard">Hard</button>
+          </div>
+          <div class="mode">
+            Mode:
+            <button class="selection-btn active" data-mode="timed">Timed (60s)</button>
+            <button class="selection-btn" data-mode="passage">Passage</button>
+          </div>
+        </section>
+      </div>
+      <section class="typing-area">
+        <p class="text-display" id="text-display"> </p>
+        <button class="start-test-btn" id="start-test-btn"> Start typing test</button>
+        <p>Or click the text and start typing</p>
       </section>
-      <section class="game-options">
-        <div class="difficulty">
-          Difficulty:
-          <button class="selection-btn active" data-difficulty="easy">Easy</button>
-          <button class="selection-btn" data-difficulty="medium">Medium</button>
-          <button class="selection-btn" data-difficulty="hard">Hard</button>
-        </div>
-        <div class="mode">
-          Mode:
-          <button class="selection-btn active" data-mode="timed">Timed (60s)</button>
-          <button class="selection-btn" data-mode="passage">Passage</button>
-        </div>
-      </section>
+      <button id="reset-button"> Restart Test</button>
     </div>
-    <section class="typing-area">
-      <p class="text-display" id="text-display"> </p>
-      <button class="start-test-btn" id="start-test-btn"> Start typing test</button>
-      <p>Or click the text and start typing</p>
-    </section>
-    <button id="reset-button"> Restart Test</button>
 
+    <div class="results-screen hidden">
+      <h2>Test results</h2>
+      <p>WPM: <span id="final-wpm"> </span> </p>
+      <p>Accuracy: <span id="final-accuracy"> </span> </p>
+      <p>Characters: <span id="TODO"> </span> </p>
+    </div>
   </main>
 
 

@@ -83,6 +83,16 @@ body {
   box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
 
+.new-test-btn {
+    background-color: hsl(0, 0%, 100%);
+    color: hsl(0, 0%, 7%);
+    font-size: 1rem;
+    border: none; 
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
 .text-display {
     font-size: 2rem;
     color: hsl(0, 0%, 100%);
@@ -100,4 +110,8 @@ body {
 .active-letter {
     background-color: hsl(240, 3%, 46%);
     border-radius: 10%;
+}
+
+.hidden {
+    display: none; 
 }

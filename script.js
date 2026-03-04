@@ -1,12 +1,18 @@
 let currentDifficulty = "easy"; 
 let currentMode = "timed";
 
+//test state
 let ongoingTest = false; 
 let currentSpanNumber = 0; 
-let incorrectCount = 0; 
-let typedCount = 0; 
 let startTime = null;
 let timer = null;
+
+//test stats
+let wpm = 0; 
+let accuracy = 0; 
+let incorrectCount = 0; 
+let typedCount = 0; 
+
 
 let textsData = {}; 
 
@@ -74,17 +80,25 @@ function startTest () {
         timeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
             timeElement.textContent = `${remainingTime}s`;
             if (remainingTime === 0) {
-                clearInterval(timer); 
+                finishTest(); 
             }
             
         }, 1000)
     } else {
         timeElement.textContent = "∞";
     }
+}
 
+function finishTest() {
+    clearInterval(timer); 
+    ongoingTest = false;
+    document.querySelector('.test-screen').classList.add('hidden'); 
+    document.querySelector('.results-screen').classList.remove('hidden'); 
+    document.querySelector('#final-wpm').textContent = wpm;
+    document.querySelector('#final-accuracy').textContent = `${accuracy}%`; 
 }
 
 document.addEventListener('keydown', (e) => {
@@ -99,36 +113,36 @@ document.addEventListener('keydown', (e) => {
     if (ignoredKeys.includes(e.key)) return; 
 
     if (e.key === 'Backspace') {
-        if (previousSpan?.classList.contains('incorrect')) {
-            previousSpan.classList.remove('incorrect');
-            previousSpan.classList.add('active-letter');
-            currentSpan.classList.remove('active-letter'); 
-            currentSpanNumber--; 
-        }
+        if (currentSpanNumber === 0) return; 
+        previousSpan?.classList.add('active-letter');
+        currentSpan?.classList.remove('active-letter'); 
+        previousSpan?.classList.remove('incorrect', 'correct');
+        currentSpanNumber--; 
+    
         return; 
     }
 
-    if(currentSpan.textContent === e.key) {
-        currentSpan.classList.add('correct'); 
-        currentSpan.classList.remove('active-letter'); 
-
-        if (currentSpanNumber === spans.length -1) {
-        // TODO - go to the statistics page
-        }
+    // Check if the pressed key matches the current character
+    if(currentSpan?.textContent === e.key) {
+        currentSpan?.classList.add('correct'); 
+        currentSpan?.classList.remove('active-letter'); 
     } else {
-        currentSpan.classList.add('incorrect'); 
-        currentSpan.classList.remove('active-letter'); 
+        currentSpan?.classList.add('incorrect'); 
+        currentSpan?.classList.remove('active-letter'); 
         incorrectCount++; 
     }
 
-
-    nextSpan?.classList.add('active-letter'); 
+    // If it's the last character, finish the test
+    if (currentSpanNumber === spans.length -1) {
+        finishTest()
+        return; 
+    }
 
     // Statistics 
 
     typedCount++;
     // Accuracy
-    const accuracy = typedCount > 0 ? Math.round(((typedCount - incorrectCount) / typedCount) * 100) : 0;
+    accuracy = typedCount > 0 ? Math.round(((typedCount - incorrectCount) / typedCount) * 100) : 0;
     accuracyElement.textContent = `${accuracy}%`; 
 
     // WPM
@@ -136,11 +150,12 @@ document.addEventListener('keydown', (e) => {
 
     const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;
     const correctCount = typedCount - incorrectCount;
-    const wpm = (correctCount / 5) /  (elapsedTimeInSeconds / 60); 
+    wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
     
-    wpmElement.textContent = Math.round(wpm); 
+    wpmElement.textContent = wpm; 
     
     currentSpanNumber++; 
+    spans[currentSpanNumber]?.classList.add('active-letter'); 
 })
 
 
