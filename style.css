@@ -25,6 +25,7 @@ body {
 
 .game-settings {
     display: flex;
+    width: 100%;
     justify-content: space-between;
 }
 
@@ -63,6 +64,7 @@ body {
 }
 
 .typing-area {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -77,6 +79,18 @@ button {
     display: flex;
     align-items: center;
     gap: 8px; 
+}
+
+.start-test-container {
+    position: absolute;
+    display: flex;
+    inset: -14px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(7px); 
+    color: hsl(0, 0%, 100%);
+    
 }
 
 .start-test-btn {
@@ -140,9 +154,13 @@ button {
     border-radius: 10%;
 }
 
-.hidden {
-    display: none; 
+.test-screen {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; 
 }
+
 .results-screen {
     display: flex; 
     flex-direction: column;
@@ -185,4 +203,8 @@ button {
 }
 #final-incorrect {
     color: hsl(354, 63%, 57%);
+}
+
+.hidden {
+    display: none; 
 }

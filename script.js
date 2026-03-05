@@ -20,17 +20,18 @@ fetch('./data.json')
     .then(res => res.json())
     .then(data => {
         textsData = data;
-        console.log(textsData);
         initDifficultyButtons();
         initModeButtons(); 
+        loadRandomTest();
     })
 
 function initSelectionButton(classSelector, onSelect) {
-    const buttons = document.querySelector(classSelector).querySelectorAll('.selection-btn'); 
+    const selectionButtons = document.querySelector(classSelector).querySelectorAll('.selection-btn'); 
 
-    buttons.forEach(btn => {
+    selectionButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            buttons.forEach(btn => btn.classList.remove('active'));
+            if (ongoingTest) return;
+            selectionButtons.forEach(btn => btn.classList.remove('active'));
             btn.classList.add('active'); 
             onSelect(btn);
         })
@@ -39,42 +40,67 @@ function initSelectionButton(classSelector, onSelect) {
 
 function initDifficultyButtons() {
     initSelectionButton('.difficulty-options', (btn) => {
+        if (btn.dataset.difficulty === currentDifficulty) return;
         currentDifficulty = btn.dataset.difficulty; 
+        loadRandomTest();
     })
 }
 
 function initModeButtons() {
     initSelectionButton('.mode-options', (btn) => {
-        currentMode = btn.dataset.mode; 
+        currentMode = btn.dataset.mode;
     })
 }
 
 const wpmElement = document.getElementById('wpm'); 
 const accuracyElement = document.getElementById('accuracy');
-const timeElement = document.getElementById('time')
+const timeElement = document.getElementById('time'); 
 
-function startTest () {
+const restartTestBtnEl = document.getElementById('restart-test-btn'); 
+
+
+
+function resetStats() {
+    wpm = 0; 
+    accuracy = 0;
+    incorrectCount = 0; 
+    typedCount = 0;
+    clearInterval(timer);
+
+    wpmElement.textContent = 0;
+    accuracyElement.textContent = "100%";
+    timeElement.textContent = currentMode === "timed" ? "60s" : "∞";
+}
+
+function loadRandomTest() {
     const possibleTests = textsData[currentDifficulty]; 
-    const randomIndex = Math.floor(Math.random() * possibleTests.length); 
-    const randomTest = possibleTests[randomIndex]; 
-    const textDisplayEl = document.getElementById('text-display'); 
-    const restartTestBtn = document.getElementById('restart-test-btn')
-    ongoingTest = true; 
-    textDisplayEl.innerHTML = ""; 
+    const randomIndex = Math.floor(Math.random() * possibleTests.length);
+    const randomText = possibleTests[randomIndex].text;
+    const textDisplayEl = document.getElementById('text-display');
 
-    restartTestBtn.classList.remove('hidden'); 
-    randomTest.text.split('').forEach(char => {
-        const span=document.createElement('span');
+    resetStats(); 
+    textDisplayEl.innerHTML=""; 
+
+    randomText.split('').forEach(char => {
+        const span = document.createElement('span'); 
         span.textContent = char; 
-        textDisplayEl.append(span)
+        textDisplayEl.append(span); 
     })
+    
     const spans = document.querySelectorAll('#text-display span');
     spans[0].classList.add('active-letter'); 
+}
+
+
+
+
+function startTest () {
     
+    ongoingTest = true;
+
+    restartTestBtnEl.classList.remove('hidden'); 
 
     currentSpanNumber = 0; 
-    incorrectCount = 0; 
-    typedCount = 0; 
     startTime = Date.now(); 
 
     // Initialize elements
@@ -115,6 +141,7 @@ function finishTest() {
     } else {
         finalAccuracyEl.classList.add('accuracy-imperfect')
     }
+    restartTestBtnEl.classList.add('hidden'); 
 
 }
 
@@ -188,11 +215,13 @@ document.getElementById('start-test-btn').addEventListener('click', () => {
 
 // Restart test button on the test screen
 document.getElementById('restart-test-btn').addEventListener('click',() => {
-    if (ongoingTest) startTest(); 
+    loadRandomTest();
+    if (ongoingTest) startTest();
 })
 
 // New test button on the results screen
 document.getElementById('new-test-btn').addEventListener('click', () => {
+    loadRandomTest();
     document.querySelector('.results-screen').classList.add('hidden'); 
     document.querySelector('.test-screen').classList.remove('hidden');
     document.getElementById('start-test-container').classList.remove('hidden'); 
