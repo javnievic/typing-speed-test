@@ -14,6 +14,10 @@ body {
     
 }
 
+p, h1, h2 {
+    margin: 0;
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -50,7 +54,7 @@ body {
 .selection-btn {
     background-color: transparent;
     color: hsl(0, 0%, 100%); 
-    border: 1px solid hsl(240, 1%, 59%);; 
+    border: 1px solid hsl(240, 1%, 59%);
     padding: 4px 8px;
     border-radius: 5px;
     font-size: 0.75rem;
@@ -61,6 +65,25 @@ body {
 .selection-btn:hover, .selection-btn.active {
     color: hsl(210, 100%, 65%); 
     border-color: hsl(210, 100%, 65%); 
+}
+
+/* Disable hover/click for all buttons except the active one */
+.selection-btn.disabled {
+    pointer-events: none; /* disable clicks */
+    color: inherit !important; 
+    border-color: inherit !important;
+}
+
+/* Ensure active button stays blue even when disabled */
+.selection-btn.disabled.active {
+    color: hsl(210, 100%, 65%) !important;
+    border-color: hsl(210, 100%, 65%) !important;
+}
+
+/* Prevent hover color for disabled buttons */
+.selection-btn.disabled:hover {
+    color: inherit !important;
+    border-color: inherit !important;
 }
 
 .typing-area {
@@ -79,6 +102,7 @@ button {
     display: flex;
     align-items: center;
     gap: 8px; 
+    font-family: "Sora", sans-serif; 
 }
 
 .start-test-container {
@@ -90,6 +114,7 @@ button {
     justify-content: center;
     backdrop-filter: blur(7px); 
     color: hsl(0, 0%, 100%);
+    gap: 12px; 
     
 }
 
@@ -101,6 +126,7 @@ button {
     padding: 12px 20px;
     border-radius: 8px;
     cursor: pointer;
+    font-weight: 400;
 }
 
 .start-test-btn:hover {
@@ -113,8 +139,13 @@ button {
   box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
 
+.start-test-container p {
+    color: hsl(0, 0%, 100%);
+    font-weight: 400;
+}
+
 .restart-test-btn {
-    background-color: hsl(0, 0%, 15%);
+    background-color: hsl(240, 3%, 46%);
     color: hsl(0, 0%, 100%);
     font-size: 1rem;
     border: none; 
@@ -165,12 +196,28 @@ button {
     display: flex; 
     flex-direction: column;
     align-items: center;
-    gap: 20px; 
+    gap: 40px; 
+}
+#results-icon.completed-border {
+    border-radius: 50%;
+    border: 15px solid hsla(140, 63%, 57%, 0.2); /* inner border */
+    box-shadow: 0 0 0 15px hsl(140, 63%, 57%, 0.1); /* outer border */
+}
+
+.results-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem; 
+}
+.results-header h1 {
+    color: hsl(0, 0%, 100%);
+    margin: 0; 
 }
 
 .result-stats-container {
     display: flex;
-    gap: 12px
+    gap: 16px
 }
 
 .stat-box {

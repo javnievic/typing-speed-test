@@ -13,6 +13,8 @@ let accuracy = 0;
 let incorrectCount = 0; 
 let typedCount = 0; 
 
+let bestWPM = null;
+
 
 let textsData = {}; 
 
@@ -23,6 +25,11 @@ fetch('./data.json')
         initDifficultyButtons();
         initModeButtons(); 
         loadRandomTest();
+        
+        // TODO: This is repeated in the finish test function, can be optimized by only doing it once and updating the value when necessary
+        let storedBest = localStorage.getItem("bestWPM");
+        bestWPM = storedBest !== null ? Number(storedBest) : null;
+        document.querySelector("#best-wmp").textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
     })
 
 function initSelectionButton(classSelector, onSelect) {
@@ -57,7 +64,7 @@ const accuracyElement = document.getElementById('accuracy');
 const timeElement = document.getElementById('time'); 
 
 const restartTestBtnEl = document.getElementById('restart-test-btn'); 
-
+const resultsIconEl = document.querySelector(".results-screen #results-icon");
 
 
 function resetStats() {
@@ -70,6 +77,8 @@ function resetStats() {
     wpmElement.textContent = 0;
     accuracyElement.textContent = "100%";
     timeElement.textContent = currentMode === "timed" ? "60s" : "∞";
+    resultsIconEl.classList.remove("completed-border");
+
 }
 
 function loadRandomTest() {
@@ -92,10 +101,7 @@ function loadRandomTest() {
 }
 
 
-
-
 function startTest () {
-    
     ongoingTest = true;
 
     restartTestBtnEl.classList.remove('hidden'); 
@@ -103,6 +109,9 @@ function startTest () {
     currentSpanNumber = 0; 
     startTime = Date.now(); 
 
+    document.querySelectorAll('.selection-btn').forEach(btn => {
+        btn.classList.add('disabled'); 
+    })
     // Initialize elements
     wpmElement.textContent = 0;
     accuracyElement.textContent = "100%";
@@ -110,7 +119,7 @@ function startTest () {
         timeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(10 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
             timeElement.textContent = `${remainingTime}s`;
             if (remainingTime === 0 && ongoingTest) {
                 finishTest(); 
@@ -125,12 +134,17 @@ function startTest () {
 function finishTest() {
     clearInterval(timer); 
     ongoingTest = false;
+
     document.querySelector('.test-screen').classList.add('hidden'); 
     document.querySelector('.results-screen').classList.remove('hidden'); 
     document.querySelector('#final-wpm').textContent = wpm;
 
     document.querySelector('#final-correct').textContent = typedCount - incorrectCount;
     document.querySelector('#final-incorrect').textContent = incorrectCount;
+
+    document.querySelectorAll('.selection-btn').forEach(btn => {
+        btn.classList.remove('disabled'); 
+    })
     
     const finalAccuracyEl = document.querySelector('#final-accuracy'); 
     finalAccuracyEl.textContent = `${accuracy}%`; 
@@ -142,7 +156,32 @@ function finishTest() {
         finalAccuracyEl.classList.add('accuracy-imperfect')
     }
     restartTestBtnEl.classList.add('hidden'); 
+    
+    const resultsHeaderEl = document.querySelector(".results-header h1");
+    const resultsSubheaderEl = document.querySelector(".results-header p");
+    let storedBest = localStorage.getItem("bestWPM");
+    bestWPM = storedBest !== null ? Number(storedBest) : null;
 
+    if (bestWPM === null) {
+        resultsIconEl.src = "assets/images/icon-completed.svg"
+        resultsIconEl.classList.add("completed-border");
+        resultsHeaderEl.textContent = "Baseline Established"
+        resultsSubheaderEl.textContent = "You've set the bar. Now the real challenge begins-time to beat it."    
+        localStorage.setItem("bestWPM", wpm);
+        document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+    } else if (wpm > bestWPM) {
+        resultsIconEl.src = "assets/images/icon-new-pb.svg"
+        resultsHeaderEl.textContent = "High score smashed!"
+        resultsSubheaderEl.textContent = "You're getting faster. That was incredibly typing."  
+        localStorage.setItem("bestWPM", wpm);
+        document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+    } else {
+        resultsIconEl.src = "assets/images/icon-completed.svg"
+        resultsIconEl.classList.add("completed-border");
+        resultsHeaderEl.textContent = "Test Complete!"
+        resultsSubheaderEl.textContent = "Solid run. Keep pushing to beat your high score."    
+    }
+    
 }
 
 document.addEventListener('keydown', (e) => {

@@ -28,7 +28,7 @@
   <header class="navbar">
     <img src="assets\images\logo-large.svg" alt="logo">
     <p style="display: flex; align-items: center; "> <img src="assets\images\icon-personal-best.svg" alt="Cup">
-      Personal best: <span style="color: hsl(0, 0%, 100%);" id=best-wmp>0 WPM</span> </p>
+      Personal best: <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span> </p>
   </header>
   <main>
     <div class="test-screen">
@@ -67,10 +67,11 @@
     </div>
 
     <div class="results-screen hidden">
-
-      <h2>Test Complete!</h2>
-      Solid run. Keep pushing to beat your high score.
-
+      <img id="results-icon"/>
+      <div class="results-header">
+        <h1>Test Complete!</h1>
+        <p>Solid run. Keep pushing to beat your high score.</p>
+      </div>
       <div class="result-stats-container">
         <div class="stat-box">WPM: <span class="stat-value" id="final-wpm"> </span></div>
         <div class="stat-box">Accuracy: <span class="stat-value" id="final-accuracy"> </span></div>
