@@ -104,6 +104,7 @@ function loadRandomTest() {
 function startTest () {
     ongoingTest = true;
 
+    restartTestBtnEl.blur();
     restartTestBtnEl.classList.remove('hidden'); 
 
     currentSpanNumber = 0; 

@@ -28,25 +28,29 @@
   <header class="navbar">
     <img src="assets\images\logo-large.svg" alt="logo">
     <p style="display: flex; align-items: center; "> <img src="assets\images\icon-personal-best.svg" alt="Cup">
-      Personal best: <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span> </p>
+      <span class="label">Personal Best:</span>
+      <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span> </p>
   </header>
   <main>
     <div class="test-screen">
       <div class="game-settings">
         <section class="game-stats">
-          WPM: <span id="wpm">0</span>
-          Accuracy:<span id="accuracy">100%</span>
-          Time: <span id="time">60s</span>
+          <span class="label">WPM:</span> <span id="wpm">0</span>
+          <div class="vertical-divider"></div>
+          <span class="label">Accuracy:</span><span id="accuracy">100%</span>
+          <div class="vertical-divider"></div>
+          <span class="label">Time:</span> <span id="time">60s</span>
         </section>
         <section class="game-options">
           <div class="difficulty-options">
-            Difficulty:
+            <span class="label">Difficulty:</span>
             <button class="selection-btn active" data-difficulty="easy">Easy</button>
             <button class="selection-btn" data-difficulty="medium">Medium</button>
             <button class="selection-btn" data-difficulty="hard">Hard</button>
           </div>
+          <div class="vertical-divider"></div>
           <div class="mode-options">
-            Mode:
+            <span class="label">Mode:</span>
             <button class="selection-btn active" data-mode="timed">Timed (60s)</button>
             <button class="selection-btn" data-mode="passage">Passage</button>
           </div>

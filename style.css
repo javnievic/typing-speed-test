@@ -27,6 +27,11 @@ p, h1, h2 {
     margin-bottom: 30px;
 }
 
+.label {
+
+    margin-right: 8px;
+}
+
 .game-settings {
     display: flex;
     width: 100%;
@@ -35,6 +40,13 @@ p, h1, h2 {
 
 .game-stats {
     display: flex;
+}
+
+.vertical-divider {
+    border: none; 
+    border-left: 1px solid hsl(240, 3%, 46%);
+    height: 80%;
+    margin: 0px 12px;
 }
 
 .game-options {
