@@ -9,7 +9,7 @@ let timer = null;
 
 //test stats
 let wpm = 0; 
-let accuracy = 0; 
+let accuracy = 100; 
 let incorrectCount = 0; 
 let typedCount = 0; 
 
@@ -59,24 +59,27 @@ function initModeButtons() {
     })
 }
 
-const wpmElement = document.getElementById('wpm'); 
-const accuracyElement = document.getElementById('accuracy');
-const timeElement = document.getElementById('time'); 
+const testWpmElement = document.getElementById('wpm'); 
+const testAccuracyElement = document.getElementById('accuracy');
+const testTimeElement = document.getElementById('time'); 
 
 const restartTestBtnEl = document.getElementById('restart-test-btn'); 
 const resultsIconEl = document.querySelector(".results-screen #results-icon");
-
+const textDisplayEl = document.getElementById('text-display');
 
 function resetStats() {
     wpm = 0; 
-    accuracy = 0;
+    accuracy = 100;
     incorrectCount = 0; 
     typedCount = 0;
-    clearInterval(timer);
+    if (timer) {
+        clearInterval(timer);
+        timer = null;
+    }
 
-    wpmElement.textContent = 0;
-    accuracyElement.textContent = "100%";
-    timeElement.textContent = currentMode === "timed" ? "60s" : "∞";
+    testWpmElement.textContent = 0;
+    testAccuracyElement.textContent = "100%";
+    testTimeElement.textContent = currentMode === "timed" ? "60s" : "∞";
     resultsIconEl.classList.remove("completed-border");
 
 }
@@ -85,7 +88,6 @@ function loadRandomTest() {
     const possibleTests = textsData[currentDifficulty]; 
     const randomIndex = Math.floor(Math.random() * possibleTests.length);
     const randomText = possibleTests[randomIndex].text;
-    const textDisplayEl = document.getElementById('text-display');
 
     resetStats(); 
     textDisplayEl.innerHTML=""; 
@@ -114,27 +116,40 @@ function startTest () {
         btn.classList.add('disabled'); 
     })
     // Initialize elements
-    wpmElement.textContent = 0;
-    accuracyElement.textContent = "100%";
+    testAccuracyElement.textContent = "100%";
     if (currentMode === "timed") { 
-        timeElement.textContent = "60s";
+        testTimeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
-            timeElement.textContent = `${remainingTime}s`;
+            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
+            testTimeElement.textContent = `${remainingTime}s`;
+
+            if (remainingTime <= 5) {
+                testTimeElement.style.color = "hsl(354, 63%, 57%)"; // red
+            } else if (remainingTime <= 45) {
+                testTimeElement.style.color = "hsl(49, 85%, 70%)"; // yellow
+            } else {
+                testTimeElement.style.color = "hsl(0, 0%, 100%)"; // white
+            }
+
             if (remainingTime === 0 && ongoingTest) {
                 finishTest(); 
             }
-            
+
         }, 1000)
     } else {
-        timeElement.textContent = "∞";
+        testTimeElement.textContent = "∞";
     }
 }
 
 function finishTest() {
-    clearInterval(timer); 
+    if (timer) {
+        clearInterval(timer); 
+        timer = null;
+    }
+
     ongoingTest = false;
+
 
     document.querySelector('.test-screen').classList.add('hidden'); 
     document.querySelector('.results-screen').classList.remove('hidden'); 
@@ -150,6 +165,8 @@ function finishTest() {
     const finalAccuracyEl = document.querySelector('#final-accuracy'); 
     finalAccuracyEl.textContent = `${accuracy}%`; 
 
+    // TODO - Refactor with the game results header, since they are pretty much doing the same thing.
+    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
     finalAccuracyEl.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
     if (accuracy === 100) {
         finalAccuracyEl.classList.add('accuracy-perfect'); 
@@ -188,7 +205,6 @@ function finishTest() {
 document.addEventListener('keydown', (e) => {
     const spans = document.querySelectorAll('#text-display span')
     const currentSpan = spans[currentSpanNumber]; 
-    const nextSpan = spans[currentSpanNumber + 1]; 
     const previousSpan = spans[currentSpanNumber - 1]; 
 
     if (e.repeat) return; // Ignore key holds, because of a spacing bug that increases the wpm
@@ -227,7 +243,14 @@ document.addEventListener('keydown', (e) => {
     typedCount++;
     // Accuracy
     accuracy = typedCount > 0 ? Math.round(((typedCount - incorrectCount) / typedCount) * 100) : 0;
-    accuracyElement.textContent = `${accuracy}%`; 
+    testAccuracyElement.textContent = `${accuracy}%`; 
+
+    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    if (accuracy === 100) {
+        testAccuracyElement.classList.add('accuracy-perfect'); 
+    } else {
+        testAccuracyElement.classList.add('accuracy-imperfect')
+    }
 
     // WPM
     // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
@@ -236,10 +259,11 @@ document.addEventListener('keydown', (e) => {
     const correctCount = typedCount - incorrectCount;
     wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
     
-    wpmElement.textContent = wpm; 
+    testWpmElement.textContent = wpm; 
     
     currentSpanNumber++; 
     spans[currentSpanNumber]?.classList.add('active-letter'); 
+
 })
 
 
@@ -248,7 +272,10 @@ Event listeners for buttons
 */
 
 // Start test button on the start screen
-document.getElementById('start-test-btn').addEventListener('click', () => {
+
+
+
+document.getElementById('start-test-container').addEventListener('click', ()=>{
     document.getElementById('start-test-container').classList.add('hidden'); 
     startTest()
 })
