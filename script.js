@@ -63,6 +63,7 @@ const testWpmElement = document.getElementById('wpm');
 const testAccuracyElement = document.getElementById('accuracy');
 const testTimeElement = document.getElementById('time'); 
 
+const restartContainerEl = document.getElementById('restart-container'); 
 const restartTestBtnEl = document.getElementById('restart-test-btn'); 
 const resultsIconEl = document.querySelector(".results-screen #results-icon");
 const textDisplayEl = document.getElementById('text-display');
@@ -107,7 +108,7 @@ function startTest () {
     ongoingTest = true;
 
     restartTestBtnEl.blur();
-    restartTestBtnEl.classList.remove('hidden'); 
+    restartContainerEl.classList.remove('hidden'); 
 
     currentSpanNumber = 0; 
     startTime = Date.now(); 
@@ -173,7 +174,8 @@ function finishTest() {
     } else {
         finalAccuracyEl.classList.add('accuracy-imperfect')
     }
-    restartTestBtnEl.classList.add('hidden'); 
+    restartContainerEl.classList.add('hidden'); 
+
     
     const resultsHeaderEl = document.querySelector(".results-header h1");
     const resultsSubheaderEl = document.querySelector(".results-header p");

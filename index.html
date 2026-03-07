@@ -27,10 +27,11 @@
 <body>
   <header class="navbar">
     <img src="assets/images/logo-large.svg" alt="logo">
-    <p class="personal-best"> 
+    <p class="personal-best">
       <img src="assets/images/icon-personal-best.svg" alt="Cup">
       <span class="label">Personal Best:</span>
-      <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span> </p>
+      <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span>
+    </p>
   </header>
   <main>
     <div class="test-screen">
@@ -57,6 +58,7 @@
           </div>
         </section>
       </div>
+      <hr>
       <section class="typing-area">
         <p class="text-display" id="text-display"> </p>
         <div class="start-test-container" id="start-test-container">
@@ -65,14 +67,18 @@
         </div>
 
       </section>
-      <button class="restart-test-btn hidden" id="restart-test-btn"> 
-        Restart Test
-        <img src="assets/images/icon-restart.svg" alt="Restart">
-      </button>
+      <div class="restart-container hidden" id="restart-container">
+        <hr>
+        <button class="restart-test-btn" id="restart-test-btn">
+          Restart Test
+          <img src="assets/images/icon-restart.svg" alt="Restart">
+        </button>
+      </div>
+
     </div>
 
     <div class="results-screen hidden">
-      <img id="results-icon" alt=""/>
+      <img id="results-icon" alt="" />
       <div class="results-header">
         <h1>Test Complete!</h1>
         <p>Solid run. Keep pushing to beat your high score.</p>
