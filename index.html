@@ -4,45 +4,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- displays site properly based on user's device -->
 
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
-
   <title>Frontend Mentor | Typing Speed Test</title>
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Attribution styles -->
   <style>
     .attribution {
       font-size: 11px;
       text-align: center;
     }
-
     .attribution a {
       color: hsl(228, 45%, 44%);
     }
   </style>
-  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+  <!-- Navbar -->
   <header class="navbar">
     <img src="assets/images/logo-large.svg" alt="logo">
     <p class="personal-best">
       <img src="assets/images/icon-personal-best.svg" alt="Cup">
-      <span class="label">Personal Best:</span>
-      <span style="color: hsl(0, 0%, 100%);" id=best-wmp></span>
+      <span class="label">Personal best:</span>
+      <span style="color: hsl(0, 0%, 100%);" id="best-wmp"></span>
     </p>
   </header>
+
+  <!-- Main content -->
   <main>
+    <!-- Test Screen -->
     <div class="test-screen">
+      <!-- Game Settings -->
       <div class="game-settings">
+        <!-- Stats -->
         <section class="game-stats">
           <span class="label">WPM:</span> <span class="stat-value" id="wpm">0</span>
           <div class="vertical-divider"></div>
-          <span class="label">Accuracy:</span><span class="stat-value" id="accuracy">100%</span>
+          <span class="label">Accuracy:</span> <span class="stat-value" id="accuracy">100%</span>
           <div class="vertical-divider"></div>
           <span class="label">Time:</span> <span class="stat-value" id="time">60s</span>
         </section>
+
+        <!-- Options -->
         <section class="game-options">
           <div class="difficulty-options">
             <span class="label">Difficulty:</span>
@@ -58,15 +64,20 @@
           </div>
         </section>
       </div>
+
       <hr>
+
+      <!-- Typing Area -->
       <section class="typing-area">
-        <p class="text-display" id="text-display"> </p>
+        <p class="text-display" id="text-display"></p>
+
         <div class="start-test-container" id="start-test-container">
-          <button class="start-test-btn" id="start-test-btn"> Start typing test</button>
+          <button class="start-test-btn" id="start-test-btn">Start typing test</button>
           <p>Or click the text and start typing</p>
         </div>
-
       </section>
+
+      <!-- Restart Button -->
       <div class="restart-container hidden" id="restart-container">
         <hr>
         <button class="restart-test-btn" id="restart-test-btn">
@@ -74,18 +85,19 @@
           <img src="assets/images/icon-restart.svg" alt="Restart">
         </button>
       </div>
-
     </div>
 
+    <!-- Results Screen -->
     <div class="results-screen hidden">
       <img id="results-icon" alt="" />
       <div class="results-header">
         <h1>Test Complete!</h1>
         <p>Solid run. Keep pushing to beat your high score.</p>
       </div>
+
       <div class="result-stats-container">
-        <div class="stat-box">WPM: <span class="stat-value" id="final-wpm"> </span></div>
-        <div class="stat-box">Accuracy: <span class="stat-value" id="final-accuracy"> </span></div>
+        <div class="stat-box">WPM: <span class="stat-value" id="final-wpm"></span></div>
+        <div class="stat-box">Accuracy: <span class="stat-value" id="final-accuracy"></span></div>
         <div class="stat-box">
           Characters:
           <div>
@@ -95,6 +107,7 @@
           </div>
         </div>
       </div>
+
       <button class="new-test-btn" id="new-test-btn">
         Go again
         <img style="filter: brightness(0);" src="assets/images/icon-restart.svg" alt="Restart">
@@ -102,10 +115,12 @@
     </div>
   </main>
 
+  <!-- Footer -->
   <footer class="attribution">
     Challenge by <a href="https://www.frontendmentor.io?ref=challenge">Frontend Mentor</a>.
     Coded by <a href="#">Javnievic</a>.
   </footer>
+
   <script defer src="script.js"></script>
 </body>
 
