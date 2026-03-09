@@ -16,6 +16,7 @@
       font-size: 11px;
       text-align: center;
     }
+
     .attribution a {
       color: hsl(228, 45%, 44%);
     }
@@ -25,10 +26,14 @@
 <body>
   <!-- Navbar -->
   <header class="navbar">
-    <img src="assets/images/logo-large.svg" alt="logo">
+    <picture>
+      <source srcset="assets/images/logo-small.svg" media="(max-width: 768px)">
+      <img src="assets/images/logo-large.svg" alt="logo">
+    </picture>
     <p class="personal-best">
       <img src="assets/images/icon-personal-best.svg" alt="Cup">
-      <span class="label">Personal best:</span>
+      <span class="label desktop-text">Personal best:</span>
+      <span class="label mobile-text">Best:</span>
       <span style="color: hsl(0, 0%, 100%);" id="best-wmp"></span>
     </p>
   </header>
@@ -41,11 +46,17 @@
       <div class="game-settings">
         <!-- Stats -->
         <section class="game-stats">
-          <span class="label">WPM:</span> <span class="stat-value" id="wpm">0</span>
+          <div class="game-stat">
+            <span>WPM:</span> <span class="stat-value" id="wpm">0</span>
+          </div>
           <div class="vertical-divider"></div>
-          <span class="label">Accuracy:</span> <span class="stat-value" id="accuracy">100%</span>
+          <div class="game-stat">
+            <span>Accuracy:</span> <span class="stat-value" id="accuracy">100%</span>
+          </div>
           <div class="vertical-divider"></div>
-          <span class="label">Time:</span> <span class="stat-value" id="time">60s</span>
+          <div class="game-stat">
+            <span>Time:</span> <span class="stat-value" id="time">60s</span>
+          </div>
         </section>
 
         <!-- Options -->
@@ -56,6 +67,48 @@
             <button class="selection-btn" data-difficulty="medium">Medium</button>
             <button class="selection-btn" data-difficulty="hard">Hard</button>
           </div>
+          <!-- Mobile Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-btn">Easy <img src="assets/images/icon-down-arrow.svg"></button>
+
+            <div class="dropdown-menu">
+              <div class="dropdown-item">
+                <span class="dot selected"></span>
+                Easy
+              </div>
+
+              <div class="dropdown-item">
+                <span class="dot"></span>
+                Medium
+              </div>
+
+              <div class="dropdown-item">
+                <span class="dot"></span>
+                Hard
+              </div>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropdown-btn">Easy <img src="assets/images/icon-down-arrow.svg"></button>
+
+            <div class="dropdown-menu">
+              <div class="dropdown-item">
+                <span class="dot selected"></span>
+                Easy
+              </div>
+
+              <div class="dropdown-item">
+                <span class="dot"></span>
+                Medium
+              </div>
+
+              <div class="dropdown-item">
+                <span class="dot"></span>
+                Hard
+              </div>
+            </div>
+          </div>
+
           <div class="vertical-divider"></div>
           <div class="mode-options">
             <span class="label">Mode:</span>

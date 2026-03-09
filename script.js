@@ -122,7 +122,7 @@ function startTest () {
         testTimeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(2 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = `${remainingTime}s`;
 
             if (remainingTime <= 5) {

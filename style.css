@@ -80,11 +80,18 @@ header.navbar {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  z-index: 10;
 }
 
 .game-stats {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+}
+
+.game-stat {
+  display: flex;
+  gap:12px; 
 }
 
 .stat-value {
@@ -95,18 +102,20 @@ header.navbar {
 
 .vertical-divider {
   border-left: 2px solid var(--color-light-black);
-  height: 80%;
+  align-self: stretch;
   margin: 0 20px;
 }
 
 .game-options {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .difficulty-options,
 .mode-options {
   display: flex;
   gap: 4px;
+  align-items: center;
 }
 
 /* ==========================
@@ -143,6 +152,7 @@ header.navbar {
 ========================== */
 .typing-area {
   position: relative;
+  z-index: 1;
 }
 
 .typing-area p {
@@ -239,6 +249,10 @@ header.navbar {
   flex-direction: column;
   align-items: center;
   gap: 12px; 
+  text-align: center;
+}
+.results-header h1 {
+  color: var(--color-white);
 }
 
 .result-stats-container {
@@ -278,35 +292,114 @@ footer {
    Responsive
 ========================== */
 
+.mobile-text, 
+.dropdown {
+  display:none; 
+}
+
 @media (max-width: 768px) {
+  .desktop-text,
+  .difficulty-options,
+  .mode-options {
+    display: none;
+  }
 
   header.navbar {
-    flex-direction: column;
-    gap: 12px;
-    height: auto;
+    height:68px;
+  }
+  .personal-best .mobile-text {
+    display: inline;
   }
 
   .game-settings {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 20px;
+
+  }
+  .game-stats {
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .game-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .game-options {
-    flex-direction: column;
-    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .game-options .vertical-divider {
+    display: none;
   }
 
-  .vertical-divider {
-    display: none;
+  .dropdown {
+    position: relative;
+    display: block;
+  }
+  
+  .dropdown-btn {
+    background: transparent;
+    color: var(--color-white);
+    border: 1px solid hsl(240, 1%, 59%);
+    padding: 4px 40px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    background: var(--color-light-black);
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 4px;
+  }
+
+  .dropdown-menu.show {
+    display: flex;
+  }
+
+  .dropdown-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--color-white);
+    font-size: 0.8rem;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px; 
+    border-radius: 50%;
+    border: 1px solid var(--color-white);
+  }
+
+  .dot.selected {
+    width: 4px;
+    height: 4px;
+    border: 4px solid var(--color-primary-hover);
   }
 
   .result-stats-container {
     flex-direction: column;
     align-items: center;
+    width: 100%;
+  }
+  
+  .results-header h1 {
+    font-size: 1.5rem;
   }
 
   .stat-box {
-    width: 200px;
+    width: 100%;
   }
 
 }
