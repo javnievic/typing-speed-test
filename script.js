@@ -32,33 +32,93 @@ fetch('./data.json')
         document.querySelector("#best-wmp").textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
     })
 
-function initSelectionButton(classSelector, onSelect) {
-    const selectionButtons = document.querySelector(classSelector).querySelectorAll('.selection-btn'); 
-
-    selectionButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (ongoingTest) return;
-            selectionButtons.forEach(btn => btn.classList.remove('active'));
-            btn.classList.add('active'); 
-            onSelect(btn);
-        })
-    })
-}
 
 function initDifficultyButtons() {
-    initSelectionButton('.difficulty-options', (btn) => {
-        if (btn.dataset.difficulty === currentDifficulty) return;
-        currentDifficulty = btn.dataset.difficulty; 
-        loadRandomTest();
-    })
+    document.querySelectorAll('.difficulty-options .selection-btn')
+        .forEach(btn => {
+            btn.addEventListener('click', () => {
+                syncDifficultyUI(btn)
+            })
+        });
 }
 
 function initModeButtons() {
-    initSelectionButton('.mode-options', (btn) => {
-        currentMode = btn.dataset.mode;
-        resetStats();
-    })
+    document.querySelectorAll('.mode-options .selection-btn')
+        .forEach(btn => {
+            btn.addEventListener('click',() => {
+                syncModeUI(btn); 
+            })
+        })
 }
+
+function syncDifficultyUI(selectedBtn) {
+    if (ongoingTest) return;
+    if (selectedBtn.dataset.difficulty === currentDifficulty) return;
+
+    currentDifficulty = selectedBtn.dataset.difficulty; 
+
+    // Desktop buttons
+    document.querySelectorAll('.difficulty-options .selection-btn')
+        .forEach(btn => {
+            btn.classList.toggle(
+                'active',
+                btn.dataset.difficulty === currentDifficulty
+            );
+        });
+
+    // Dropdown items
+    document.querySelectorAll('#difficulty-dropdown .dropdown-item')
+        .forEach(item => {
+            item.classList.toggle(
+                'active',
+                item.dataset.difficulty === currentDifficulty
+            );
+        });
+
+    // Dropdown label
+    const difficultyDropdownBtn =
+        document.querySelector('#difficulty-dropdown-btn span');
+
+    difficultyDropdownBtn.textContent =
+        currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+
+    loadRandomTest();
+}
+
+function syncModeUI(selectedBtn) {
+    if (ongoingTest) return;
+    if (selectedBtn.dataset.mode === currentMode) return;
+
+    currentMode = selectedBtn.dataset.mode;
+
+    // Desktop buttons
+    document.querySelectorAll('.mode-options .selection-btn')
+        .forEach(btn => {
+            btn.classList.toggle(
+                'active',
+                btn.dataset.mode === currentMode
+            );
+        });
+
+    // Dropdown items
+    document.querySelectorAll('#mode-dropdown .dropdown-item')
+        .forEach(item => {
+            item.classList.toggle(
+                'active',
+                item.dataset.mode === currentMode
+            );
+        });
+
+    // Dropdown label
+    const modeDropdownBtn =
+        document.querySelector('#mode-dropdown-btn span');
+
+    modeDropdownBtn.textContent =
+        currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+
+    resetStats(); 
+}
+
 
 const dropdownBtns = document.querySelectorAll(".dropdown-btn"); 
 
@@ -74,11 +134,7 @@ document.addEventListener('click', (e) => {
       document.querySelectorAll('.dropdown-menu')
         .forEach(menu => menu.classList.remove('show'));
   }
-
 });
-
-
-
 
 
 const dropdownItems = document.querySelectorAll('.dropdown-item');
@@ -89,28 +145,12 @@ dropdownItems.forEach(item => {
         const difficulty = item.dataset.difficulty; 
         const mode = item.dataset.mode; 
 
-        if (ongoingTest) return;
         if (item.dataset.difficulty === currentDifficulty) return;
         if (item.dataset.mode === currentMode) return;
 
-        menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active')); 
-        item.classList.add('active');
-        if (difficulty) {
-            const difficultyDropdownBtn =  document.getElementById('difficulty-dropdown-btn'); 
-            
-            currentDifficulty = item.dataset.difficulty; 
-            difficultyDropdownBtn.querySelector('span').textContent = currentDifficulty;
-            loadRandomTest();
-        }
-        if (mode) {
-            const modeDropdownBtn =  document.getElementById('mode-dropdown-btn'); 
-            
-            currentMode = item.dataset.mode; 
-            console.log(currentMode); 
-            modeDropdownBtn.querySelector('span').textContent = currentMode;
-            resetStats();
-        }
-        
+        if (difficulty)syncDifficultyUI(item); 
+        if (mode) syncModeUI(item); 
+
         menu.classList.remove('show')
     })
 })
