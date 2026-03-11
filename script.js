@@ -218,8 +218,15 @@ function startTest () {
         testTimeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(2 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(20 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = `${remainingTime}s`;
+            
+            // WPM
+            // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
+            const correctCount = typedCount - incorrectCount;
+            wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
+            testWpmElement.textContent = wpm; 
+
 
             if (remainingTime <= 5) {
                 testTimeElement.style.color = "hsl(354, 63%, 57%)"; // red
@@ -285,19 +292,36 @@ function finishTest() {
         resultsSubheaderEl.textContent = "You've set the bar. Now the real challenge begins-time to beat it."    
         localStorage.setItem("bestWPM", wpm);
         document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+        showStars();
     } else if (wpm > bestWPM) {
         resultsIconEl.src = "assets/images/icon-new-pb.svg"
         resultsHeaderEl.textContent = "High score smashed!"
         resultsSubheaderEl.textContent = "You're getting faster. That was incredibly typing."  
         localStorage.setItem("bestWPM", wpm);
         document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+        showConfetti();
     } else {
         resultsIconEl.src = "assets/images/icon-completed.svg"
         resultsIconEl.classList.add("completed-border");
-        resultsHeaderEl.textContent = "Test Complete!"
-        resultsSubheaderEl.textContent = "Solid run. Keep pushing to beat your high score."    
+        resultsHeaderEl.textContent = "Test Complete!";
+        resultsSubheaderEl.textContent = "Solid run. Keep pushing to beat your high score."; 
+        showStars();
     }
     
+}
+
+function showConfetti() {
+    const confettiOverlayEl = document.getElementById('confetti-overlay');
+    confettiOverlayEl.classList.add('show'); 
+
+    setTimeout(() => {
+        confettiOverlayEl.classList.remove('show'); 
+    }, 3000)
+}
+
+function showStars() {
+    const starOverlayEl = document.getElementById('stars-overlay');
+    starOverlayEl.classList.add('show');
 }
 
 document.addEventListener('keydown', (e) => {
@@ -349,15 +373,6 @@ document.addEventListener('keydown', (e) => {
     } else {
         testAccuracyElement.classList.add('accuracy-imperfect')
     }
-
-    // WPM
-    // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
-
-    const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;
-    const correctCount = typedCount - incorrectCount;
-    wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
-    
-    testWpmElement.textContent = wpm; 
     
     currentSpanNumber++; 
     spans[currentSpanNumber]?.classList.add('active-letter'); 
@@ -390,4 +405,7 @@ document.getElementById('new-test-btn').addEventListener('click', () => {
     document.querySelector('.results-screen').classList.add('hidden'); 
     document.querySelector('.test-screen').classList.remove('hidden');
     document.getElementById('start-test-container').classList.remove('hidden'); 
+        
+    const starOverlayEl = document.getElementById('stars-overlay');
+    starOverlayEl.classList.remove('show');
 })

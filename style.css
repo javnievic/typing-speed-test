@@ -278,6 +278,43 @@ header.navbar {
 
 .hidden { display: none; }
 
+#confetti-overlay {
+  position: fixed;
+  top:0; 
+  left:0; 
+  width: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform  3s ease;
+  z-index: 9999;
+}
+#confetti-overlay.show {
+  opacity: 1;
+  transform: translateY(80vh);
+}
+
+#star-1 {
+  position: absolute;
+  z-index: 9999;
+  bottom: 20%;
+  right: 10%;
+}
+
+#star-2 {
+  position: absolute;
+  z-index: 9999;
+  top: 20%;
+  left: 10%;
+}
+
+#stars-overlay {
+  opacity: 0;
+}
+
+#stars-overlay.show {
+  opacity: 1;
+}
+
 /* ==========================
    Footer
 ========================== */
@@ -402,6 +439,23 @@ footer {
 
   .stat-box {
     width: 100%;
+  }
+  #star-1,
+  #star-2 {
+    width: 30px;
+    height: auto;
+  }
+
+  #star-1 {
+    bottom: 5%;
+    right: 5%;
+  }
+
+  #star-2 {
+    position: absolute;
+    z-index: 9999;
+    top: 20%;
+    left: 5%;
   }
 
 }
