@@ -6,6 +6,7 @@ let ongoingTest = false;
 let currentSpanNumber = 0; 
 let startTime = null;
 let timer = null;
+let wpmUpdater = null;
 
 //test stats
 let wpm = 0; 
@@ -212,20 +213,24 @@ function startTest () {
     document.querySelectorAll('.selection-btn').forEach(btn => {
         btn.classList.add('disabled'); 
     })
+    wpmUpdater = setInterval(() => {
+        if (ongoingTest) {
+            // WPM
+            // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
+            const elapsedTimeInSeconds = (Date.now() - startTime) / 1000; 
+            const correctCount = typedCount - incorrectCount;
+            wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
+            testWpmElement.textContent = wpm; 
+        }
+    }, 1000)
     // Initialize elements
     testAccuracyElement.textContent = "100%";
     if (currentMode === "timed") { 
         testTimeElement.textContent = "60s";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(20 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(5 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = `${remainingTime}s`;
-            
-            // WPM
-            // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
-            const correctCount = typedCount - incorrectCount;
-            wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
-            testWpmElement.textContent = wpm; 
 
 
             if (remainingTime <= 5) {
@@ -250,6 +255,10 @@ function finishTest() {
     if (timer) {
         clearInterval(timer); 
         timer = null;
+    }
+    if (wpmUpdater) {
+        clearInterval(wpmUpdater); 
+        wpmUpdater = null;
     }
 
     ongoingTest = false;
@@ -373,7 +382,6 @@ document.addEventListener('keydown', (e) => {
     } else {
         testAccuracyElement.classList.add('accuracy-imperfect')
     }
-    
     currentSpanNumber++; 
     spans[currentSpanNumber]?.classList.add('active-letter'); 
 
