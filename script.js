@@ -56,8 +56,64 @@ function initDifficultyButtons() {
 function initModeButtons() {
     initSelectionButton('.mode-options', (btn) => {
         currentMode = btn.dataset.mode;
+        resetStats();
     })
 }
+
+const dropdownBtns = document.querySelectorAll(".dropdown-btn"); 
+
+dropdownBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const menu = btn.nextElementSibling; 
+        menu.classList.toggle('show'); 
+    })
+})
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu')
+        .forEach(menu => menu.classList.remove('show'));
+  }
+
+});
+
+
+
+
+
+const dropdownItems = document.querySelectorAll('.dropdown-item');
+dropdownItems.forEach(item => {
+
+    item.addEventListener('click', () => {
+        const menu = item.closest(".dropdown-menu");
+        const difficulty = item.dataset.difficulty; 
+        const mode = item.dataset.mode; 
+
+        if (ongoingTest) return;
+        if (item.dataset.difficulty === currentDifficulty) return;
+        if (item.dataset.mode === currentMode) return;
+
+        menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active')); 
+        item.classList.add('active');
+        if (difficulty) {
+            const difficultyDropdownBtn =  document.getElementById('difficulty-dropdown-btn'); 
+            
+            currentDifficulty = item.dataset.difficulty; 
+            difficultyDropdownBtn.querySelector('span').textContent = currentDifficulty;
+            loadRandomTest();
+        }
+        if (mode) {
+            const modeDropdownBtn =  document.getElementById('mode-dropdown-btn'); 
+            
+            currentMode = item.dataset.mode; 
+            console.log(currentMode); 
+            modeDropdownBtn.querySelector('span').textContent = currentMode;
+            resetStats();
+        }
+        
+        menu.classList.remove('show')
+    })
+})
 
 const testWpmElement = document.getElementById('wpm'); 
 const testAccuracyElement = document.getElementById('accuracy');

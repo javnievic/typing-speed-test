@@ -68,43 +68,39 @@
             <button class="selection-btn" data-difficulty="hard">Hard</button>
           </div>
           <!-- Mobile Dropdown -->
-          <div class="dropdown">
-            <button class="dropdown-btn">Easy <img src="assets/images/icon-down-arrow.svg"></button>
+          <div class="dropdown" id="difficulty-dropdown">
+            <button class="dropdown-btn" id="difficulty-dropdown-btn"> <span> Easy</span> <img src="assets/images/icon-down-arrow.svg"></button>
 
             <div class="dropdown-menu">
-              <div class="dropdown-item">
-                <span class="dot selected"></span>
+              <div class="dropdown-item active" data-difficulty="easy">
+                <span class="dot" ></span>
                 Easy
               </div>
 
-              <div class="dropdown-item">
+              <div class="dropdown-item" data-difficulty="medium">
                 <span class="dot"></span>
                 Medium
               </div>
 
-              <div class="dropdown-item">
+              <div class="dropdown-item" data-difficulty="hard">
                 <span class="dot"></span>
                 Hard
               </div>
             </div>
           </div>
+          
           <div class="dropdown">
-            <button class="dropdown-btn">Easy <img src="assets/images/icon-down-arrow.svg"></button>
+            <button class="dropdown-btn" id="mode-dropdown-btn"><span>Timed (60s)</span> <img src="assets/images/icon-down-arrow.svg"></button>
 
             <div class="dropdown-menu">
-              <div class="dropdown-item">
-                <span class="dot selected"></span>
-                Easy
+              <div class="dropdown-item active" data-mode="timed">
+                <span class="dot selected" ></span>
+                Timed (60s)
               </div>
 
-              <div class="dropdown-item">
+              <div class="dropdown-item" data-mode="passage">
                 <span class="dot"></span>
-                Medium
-              </div>
-
-              <div class="dropdown-item">
-                <span class="dot"></span>
-                Hard
+                Passage
               </div>
             </div>
           </div>

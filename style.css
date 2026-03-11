@@ -192,7 +192,7 @@ header.navbar {
 }
 
 .start-test-btn:hover { background-color: var(--color-primary-hover); }
-.start-test-container p { font-weight: 400; }
+.start-test-container p { font-weight: 400; color: var(--color-white);}
 
 /* ==========================
    Restart / New Test Buttons
@@ -353,6 +353,7 @@ footer {
   }
 
   .dropdown-menu {
+    display: none;
     position: absolute;
     background: var(--color-light-black);
     width: 100%;
@@ -362,6 +363,7 @@ footer {
 
   .dropdown-menu.show {
     display: flex;
+    flex-direction: column;
   }
 
   .dropdown-item {
@@ -382,7 +384,7 @@ footer {
     border: 1px solid var(--color-white);
   }
 
-  .dot.selected {
+  .dropdown-item.active .dot {
     width: 4px;
     height: 4px;
     border: 4px solid var(--color-primary-hover);
