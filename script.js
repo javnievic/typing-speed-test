@@ -1,3 +1,5 @@
+import { formatTime } from "./utils.js";
+
 let currentDifficulty = "easy"; 
 let currentMode = "timed";
 
@@ -177,7 +179,7 @@ function resetStats() {
 
     testWpmElement.textContent = 0;
     testAccuracyElement.textContent = "100%";
-    testTimeElement.textContent = currentMode === "timed" ? "60s" : "∞";
+    testTimeElement.textContent = currentMode === "timed" ? "0:60" : "∞";
     resultsIconEl.classList.remove("completed-border");
 
 }
@@ -226,11 +228,11 @@ function startTest () {
     // Initialize elements
     testAccuracyElement.textContent = "100%";
     if (currentMode === "timed") { 
-        testTimeElement.textContent = "60s";
+        testTimeElement.textContent = "0:60";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
             const remainingTime = Math.max(5 - Math.floor(elapsedTimeInSeconds), 0); 
-            testTimeElement.textContent = `${remainingTime}s`;
+            testTimeElement.textContent = formatTime(remainingTime);
 
 
             if (remainingTime <= 5) {
@@ -294,6 +296,9 @@ function finishTest() {
     let storedBest = localStorage.getItem("bestWPM");
     bestWPM = storedBest !== null ? Number(storedBest) : null;
 
+    const newTestBtnEl = document.getElementById('new-test-btn'); 
+
+
     if (bestWPM === null) {
         resultsIconEl.src = "assets/images/icon-completed.svg"
         resultsIconEl.classList.add("completed-border");
@@ -302,6 +307,7 @@ function finishTest() {
         localStorage.setItem("bestWPM", wpm);
         document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
         showStars();
+        newTestBtnEl.querySelector('span').textContent = "Beat This Score"; 
     } else if (wpm > bestWPM) {
         resultsIconEl.src = "assets/images/icon-new-pb.svg"
         resultsHeaderEl.textContent = "High score smashed!"
@@ -309,12 +315,14 @@ function finishTest() {
         localStorage.setItem("bestWPM", wpm);
         document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
         showConfetti();
+        newTestBtnEl.querySelector('span').textContent = "Beat This Score"; 
     } else {
         resultsIconEl.src = "assets/images/icon-completed.svg"
         resultsIconEl.classList.add("completed-border");
         resultsHeaderEl.textContent = "Test Complete!";
         resultsSubheaderEl.textContent = "Solid run. Keep pushing to beat your high score."; 
         showStars();
+        newTestBtnEl.querySelector('span').textContent = "Go again"; 
     }
     
 }
