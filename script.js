@@ -142,7 +142,6 @@ document.addEventListener('click', (e) => {
 
 const dropdownItems = document.querySelectorAll('.dropdown-item');
 dropdownItems.forEach(item => {
-
     item.addEventListener('click', () => {
         const menu = item.closest(".dropdown-menu");
         const difficulty = item.dataset.difficulty; 
@@ -182,6 +181,9 @@ function resetStats() {
     testTimeElement.textContent = currentMode === "timed" ? "0:60" : "∞";
     resultsIconEl.classList.remove("completed-border");
 
+    const starOverlayEl = document.getElementById('stars-overlay');
+    starOverlayEl.classList.remove('show');
+
 }
 
 function loadRandomTest() {
@@ -219,6 +221,7 @@ function startTest () {
         if (ongoingTest) {
             // WPM
             // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
+            
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000; 
             const correctCount = typedCount - incorrectCount;
             wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
@@ -253,7 +256,46 @@ function startTest () {
     }
 }
 
+const finalAccuracyEl = document.querySelector('#final-accuracy'); 
+
 function finishTest() {
+    stopTimers(); 
+    ongoingTest = false;
+    changeScreen();
+    updateFinalStatsUI();
+
+    // TODO - Refactor with the game results header, since they are pretty much doing the same thing.
+    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    finalAccuracyEl.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    if (accuracy === 100) {
+        finalAccuracyEl.classList.add('accuracy-perfect'); 
+    } else {
+        finalAccuracyEl.classList.add('accuracy-imperfect'); 
+    }
+    restartContainerEl.classList.add('hidden'); 
+
+    handleBestWPM(); 
+}
+
+function updateFinalStatsUI() {
+    const finalWpm = document.querySelector('#final-wpm'); 
+    const finalCorrect = document.querySelector('#final-correct'); 
+    const finalIncorrect = document.querySelector('#final-incorrect'); 
+    
+    
+    finalWpm.textContent = wpm;
+    finalCorrect.textContent = typedCount - incorrectCount;
+    finalIncorrect.textContent = incorrectCount;
+
+    document.querySelectorAll('.selection-btn').forEach(btn => {
+        btn.classList.remove('disabled'); 
+    })
+    
+    finalAccuracyEl.textContent = `${accuracy}%`; 
+
+}
+
+function stopTimers() {
     if (timer) {
         clearInterval(timer); 
         timer = null;
@@ -262,42 +304,21 @@ function finishTest() {
         clearInterval(wpmUpdater); 
         wpmUpdater = null;
     }
+}
 
-    ongoingTest = false;
+function changeScreen() {
+    document.querySelector('.test-screen').classList.toggle('hidden');
+    document.querySelector('.results-screen').classList.toggle('hidden')
+}
 
-
-    document.querySelector('.test-screen').classList.add('hidden'); 
-    document.querySelector('.results-screen').classList.remove('hidden'); 
-    document.querySelector('#final-wpm').textContent = wpm;
-
-    document.querySelector('#final-correct').textContent = typedCount - incorrectCount;
-    document.querySelector('#final-incorrect').textContent = incorrectCount;
-
-    document.querySelectorAll('.selection-btn').forEach(btn => {
-        btn.classList.remove('disabled'); 
-    })
-    
-    const finalAccuracyEl = document.querySelector('#final-accuracy'); 
-    finalAccuracyEl.textContent = `${accuracy}%`; 
-
-    // TODO - Refactor with the game results header, since they are pretty much doing the same thing.
-    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    finalAccuracyEl.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    if (accuracy === 100) {
-        finalAccuracyEl.classList.add('accuracy-perfect'); 
-    } else {
-        finalAccuracyEl.classList.add('accuracy-imperfect')
-    }
-    restartContainerEl.classList.add('hidden'); 
-
-    
+function handleBestWPM() {
     const resultsHeaderEl = document.querySelector(".results-header h1");
     const resultsSubheaderEl = document.querySelector(".results-header p");
     let storedBest = localStorage.getItem("bestWPM");
     bestWPM = storedBest !== null ? Number(storedBest) : null;
 
     const newTestBtnEl = document.getElementById('new-test-btn'); 
-
+    
 
     if (bestWPM === null) {
         resultsIconEl.src = "assets/images/icon-completed.svg"
@@ -324,7 +345,6 @@ function finishTest() {
         showStars();
         newTestBtnEl.querySelector('span').textContent = "Go again"; 
     }
-    
 }
 
 function showConfetti() {
@@ -418,10 +438,7 @@ document.getElementById('restart-test-btn').addEventListener('click',() => {
 // New test button on the results screen
 document.getElementById('new-test-btn').addEventListener('click', () => {
     loadRandomTest();
-    document.querySelector('.results-screen').classList.add('hidden'); 
-    document.querySelector('.test-screen').classList.remove('hidden');
+    changeScreen();
     document.getElementById('start-test-container').classList.remove('hidden'); 
-        
-    const starOverlayEl = document.getElementById('stars-overlay');
-    starOverlayEl.classList.remove('show');
+    
 })
