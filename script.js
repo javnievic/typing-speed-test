@@ -179,11 +179,15 @@ function resetStats() {
     testWpmElement.textContent = 0;
     testAccuracyElement.textContent = "100%";
     testTimeElement.textContent = currentMode === "timed" ? "0:60" : "∞";
+    
+    // Reset colors
     resultsIconEl.classList.remove("completed-border");
 
     const starOverlayEl = document.getElementById('stars-overlay');
     starOverlayEl.classList.remove('show');
 
+    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    testTimeElement.style.color = "hsl(0, 0%, 100%)"; 
 }
 
 function loadRandomTest() {
@@ -234,9 +238,8 @@ function startTest () {
         testTimeElement.textContent = "0:60";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(5 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = formatTime(remainingTime);
-
 
             if (remainingTime <= 5) {
                 testTimeElement.style.color = "hsl(354, 63%, 57%)"; // red
@@ -263,18 +266,21 @@ function finishTest() {
     ongoingTest = false;
     changeScreen();
     updateFinalStatsUI();
-
-    // TODO - Refactor with the game results header, since they are pretty much doing the same thing.
-    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    finalAccuracyEl.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    if (accuracy === 100) {
-        finalAccuracyEl.classList.add('accuracy-perfect'); 
-    } else {
-        finalAccuracyEl.classList.add('accuracy-imperfect'); 
-    }
-    restartContainerEl.classList.add('hidden'); 
-
+    updateAccuracyUI();
     handleBestWPM(); 
+}
+
+function updateAccuracyUI() {
+    finalAccuracyEl.classList.remove(
+        'accuracy-imperfect',
+        'accuracy-perfect'
+    );
+
+    if (accuracy === 100) {
+        finalAccuracyEl.classList.add('accuracy-perfect');
+    } else {
+        finalAccuracyEl.classList.add('accuracy-imperfect');
+    }
 }
 
 function updateFinalStatsUI() {
