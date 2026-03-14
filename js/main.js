@@ -1,5 +1,7 @@
 import { formatTime } from "./utils.js";
 import { getStoredBestWPM, setStoredBestWPM } from "./storage.js";
+import { calculateWPM, calculateAccuracy } from "./stats.js"
+import { state } from ".state.js";
 
 let currentDifficulty = "easy"; 
 let currentMode = "timed";
@@ -222,12 +224,9 @@ function startTest () {
     })
     wpmUpdater = setInterval(() => {
         if (ongoingTest) {
-            // WPM
-            // (Total characters typed ÷ 5) ÷ Time in minutes - ref: https://typingspeedhub.com/average-typing-speed-statistics-2024.html
-            
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000; 
             const correctCount = typedCount - incorrectCount;
-            wpm = Math.round((correctCount / 5) /  (elapsedTimeInSeconds / 60)); 
+            wpm = calculateWPM(correctCount, elapsedTimeInSeconds); 
             testWpmElement.textContent = wpm; 
         }
     }, 1000)
@@ -430,7 +429,7 @@ document.addEventListener('keydown', (e) => {
 
     typedCount++;
     // Accuracy
-    accuracy = typedCount > 0 ? Math.round(((typedCount - incorrectCount) / typedCount) * 100) : 0;
+    accuracy = calculateAccuracy(typedCount, incorrectCount); 
     testAccuracyElement.textContent = `${accuracy}%`; 
 
     testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
