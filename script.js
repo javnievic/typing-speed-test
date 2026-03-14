@@ -29,10 +29,8 @@ fetch('./data.json')
         initModeButtons(); 
         loadRandomTest();
         
-        // TODO: This is repeated in the finish test function, can be optimized by only doing it once and updating the value when necessary
-        let storedBest = localStorage.getItem("bestWPM");
-        bestWPM = storedBest !== null ? Number(storedBest) : null;
-        document.querySelector("#best-wmp").textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
+        bestWPM =  getStoredBestWPM(); 
+        updateBestWPMUI(); 
     })
 
 
@@ -238,7 +236,7 @@ function startTest () {
         testTimeElement.textContent = "0:60";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = formatTime(remainingTime);
 
             if (remainingTime <= 5) {
@@ -318,40 +316,68 @@ function changeScreen() {
 }
 
 function handleBestWPM() {
-    const resultsHeaderEl = document.querySelector(".results-header h1");
-    const resultsSubheaderEl = document.querySelector(".results-header p");
-    let storedBest = localStorage.getItem("bestWPM");
-    bestWPM = storedBest !== null ? Number(storedBest) : null;
-
-    const newTestBtnEl = document.getElementById('new-test-btn'); 
+    const storedBest = getStoredBestWPM(); 
+    const isNewRecord = storedBest === null || wpm > storedBest;
     
-
-    if (bestWPM === null) {
-        resultsIconEl.src = "assets/images/icon-completed.svg"
-        resultsIconEl.classList.add("completed-border");
-        resultsHeaderEl.textContent = "Baseline Established"
-        resultsSubheaderEl.textContent = "You've set the bar. Now the real challenge begins-time to beat it."    
-        localStorage.setItem("bestWPM", wpm);
-        document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+    if (isNewRecord) setBestWPM(); 
+    
+    if (storedBest === null) {
+        setResultsUI({
+            icon: "assets/images/icon-completed.svg",
+            header: "Baseline Established",
+            subheader: "You've set the bar. Now the real challenge begins—time to beat it.",
+            buttonText: "Beat This Score",
+            border: true
+        });
         showStars();
-        newTestBtnEl.querySelector('span').textContent = "Beat This Score"; 
-    } else if (wpm > bestWPM) {
-        resultsIconEl.src = "assets/images/icon-new-pb.svg"
-        resultsHeaderEl.textContent = "High score smashed!"
-        resultsSubheaderEl.textContent = "You're getting faster. That was incredibly typing."  
-        localStorage.setItem("bestWPM", wpm);
-        document.querySelector("#best-wmp").textContent = `${wpm} WPM`;
+    } else if (wpm > storedBest) {
+        setResultsUI({
+            icon: "assets/images/icon-new-pb.svg",
+            header: "High score smashed!",
+            subheader: "You're getting faster. That was incredibly typing.",
+            buttonText: "Beat This Score",
+            border: false
+        });
         showConfetti();
-        newTestBtnEl.querySelector('span').textContent = "Beat This Score"; 
     } else {
-        resultsIconEl.src = "assets/images/icon-completed.svg"
-        resultsIconEl.classList.add("completed-border");
-        resultsHeaderEl.textContent = "Test Complete!";
-        resultsSubheaderEl.textContent = "Solid run. Keep pushing to beat your high score."; 
+        setResultsUI({
+            icon: "assets/images/icon-completed.svg",
+            header: "Test Complete!",
+            subheader: "Solid run. Keep pushing to beat your high score.",
+            buttonText: "Go again",
+            border: true
+        });
         showStars();
-        newTestBtnEl.querySelector('span').textContent = "Go again"; 
     }
 }
+function getStoredBestWPM() {
+    const storedBest = localStorage.getItem("bestWPM"); 
+    return storedBest !== null ? Number(storedBest) : null; 
+}
+
+function updateBestWPMUI() {
+    const bestWpmEl = document.querySelector("#best-wmp");
+    bestWpmEl.textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
+}
+
+function setBestWPM() {
+    bestWPM = wpm;
+    localStorage.setItem("bestWPM", bestWPM);
+    updateBestWPMUI();
+}
+
+function setResultsUI({icon, header, subheader, buttonText, border=false}) {
+    const resultsHeaderEl = document.querySelector(".results-header h1");
+    const resultsSubheaderEl = document.querySelector(".results-header p");
+    const newTestBtnEl = document.getElementById('new-test-btn'); 
+
+    resultsIconEl.src = icon; 
+    resultsIconEl.classList.toggle("completed-border", border);
+    resultsHeaderEl.textContent = header; 
+    resultsSubheaderEl.textContent = subheader; 
+    newTestBtnEl.querySelector('span').textContent = buttonText; 
+}
+
 
 function showConfetti() {
     const confettiOverlayEl = document.getElementById('confetti-overlay');
@@ -418,7 +444,6 @@ document.addEventListener('keydown', (e) => {
     }
     currentSpanNumber++; 
     spans[currentSpanNumber]?.classList.add('active-letter'); 
-
 })
 
 
