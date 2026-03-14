@@ -1,4 +1,5 @@
 import { formatTime } from "./utils.js";
+import { getStoredBestWPM, setStoredBestWPM } from "./storage.js";
 
 let currentDifficulty = "easy"; 
 let currentMode = "timed";
@@ -236,7 +237,7 @@ function startTest () {
         testTimeElement.textContent = "0:60";
         timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
-            const remainingTime = Math.max(6 - Math.floor(elapsedTimeInSeconds), 0); 
+            const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = formatTime(remainingTime);
 
             if (remainingTime <= 5) {
@@ -350,19 +351,15 @@ function handleBestWPM() {
         showStars();
     }
 }
-function getStoredBestWPM() {
-    const storedBest = localStorage.getItem("bestWPM"); 
-    return storedBest !== null ? Number(storedBest) : null; 
-}
 
 function updateBestWPMUI() {
-    const bestWpmEl = document.querySelector("#best-wmp");
+    const bestWpmEl = document.querySelector("#best-wpm");
     bestWpmEl.textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
 }
 
 function setBestWPM() {
     bestWPM = wpm;
-    localStorage.setItem("bestWPM", bestWPM);
+    setStoredBestWPM(bestWPM); 
     updateBestWPMUI();
 }
 
