@@ -1,26 +1,7 @@
 import { formatTime } from "./utils.js";
 import { getStoredBestWPM, setStoredBestWPM } from "./storage.js";
-import { calculateWPM, calculateAccuracy } from "./stats.js"
-import { state } from ".state.js";
-
-let currentDifficulty = "easy"; 
-let currentMode = "timed";
-
-//test state
-let ongoingTest = false; 
-let currentSpanNumber = 0; 
-let startTime = null;
-let timer = null;
-let wpmUpdater = null;
-
-//test stats
-let wpm = 0; 
-let accuracy = 100; 
-let incorrectCount = 0; 
-let typedCount = 0; 
-
-let bestWPM = null;
-
+import { calculateWPM, calculateAccuracy } from "./stats.js";
+import { state } from "./state.js";
 
 let textsData = {}; 
 
@@ -32,75 +13,69 @@ fetch('./data.json')
         initModeButtons(); 
         loadRandomTest();
         
-        bestWPM =  getStoredBestWPM(); 
-        updateBestWPMUI(); 
-    })
-
+        state.bestWPM = getStoredBestWPM(); 
+        updateBestWPMUI();
+    });
 
 function initDifficultyButtons() {
     document.querySelectorAll('.difficulty-options .selection-btn')
         .forEach(btn => {
             btn.addEventListener('click', () => {
-                syncDifficultyUI(btn)
-            })
+                syncDifficultyUI(btn);
+            });
         });
 }
 
 function initModeButtons() {
     document.querySelectorAll('.mode-options .selection-btn')
         .forEach(btn => {
-            btn.addEventListener('click',() => {
+            btn.addEventListener('click', () => {
                 syncModeUI(btn); 
-            })
-        })
+            });
+        });
 }
 
 function syncDifficultyUI(selectedBtn) {
-    if (ongoingTest) return;
-    if (selectedBtn.dataset.difficulty === currentDifficulty) return;
+    if (state.ongoingTest) return;
+    if (selectedBtn.dataset.difficulty === state.currentDifficulty) return;
 
-    currentDifficulty = selectedBtn.dataset.difficulty; 
+    state.currentDifficulty = selectedBtn.dataset.difficulty; 
 
-    // Desktop buttons
     document.querySelectorAll('.difficulty-options .selection-btn')
         .forEach(btn => {
             btn.classList.toggle(
                 'active',
-                btn.dataset.difficulty === currentDifficulty
+                btn.dataset.difficulty === state.currentDifficulty
             );
         });
 
-    // Dropdown items
     document.querySelectorAll('#difficulty-dropdown .dropdown-item')
         .forEach(item => {
             item.classList.toggle(
                 'active',
-                item.dataset.difficulty === currentDifficulty
+                item.dataset.difficulty === state.currentDifficulty
             );
         });
 
-    // Dropdown label
-    const difficultyDropdownBtn =
-        document.querySelector('#difficulty-dropdown-btn span');
-
+    const difficultyDropdownBtn = document.querySelector('#difficulty-dropdown-btn span');
     difficultyDropdownBtn.textContent =
-        currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+        state.currentDifficulty.charAt(0).toUpperCase() + state.currentDifficulty.slice(1);
 
     loadRandomTest();
 }
 
 function syncModeUI(selectedBtn) {
-    if (ongoingTest) return;
-    if (selectedBtn.dataset.mode === currentMode) return;
+    if (state.ongoingTest) return;
+    if (selectedBtn.dataset.mode === state.currentMode) return;
 
-    currentMode = selectedBtn.dataset.mode;
+    state.currentMode = selectedBtn.dataset.mode;
 
     // Desktop buttons
     document.querySelectorAll('.mode-options .selection-btn')
         .forEach(btn => {
             btn.classList.toggle(
                 'active',
-                btn.dataset.mode === currentMode
+                btn.dataset.mode === state.currentMode
             );
         });
 
@@ -109,29 +84,25 @@ function syncModeUI(selectedBtn) {
         .forEach(item => {
             item.classList.toggle(
                 'active',
-                item.dataset.mode === currentMode
+                item.dataset.mode === state.currentMode
             );
         });
 
     // Dropdown label
-    const modeDropdownBtn =
-        document.querySelector('#mode-dropdown-btn span');
-
+    const modeDropdownBtn = document.querySelector('#mode-dropdown-btn span');
     modeDropdownBtn.textContent =
-        currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+        state.currentMode.charAt(0).toUpperCase() + state.currentMode.slice(1);
 
     resetStats(); 
 }
 
-
 const dropdownBtns = document.querySelectorAll(".dropdown-btn"); 
-
 dropdownBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const menu = btn.nextElementSibling; 
         menu.classList.toggle('show'); 
-    })
-})
+    });
+});
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) {
@@ -140,7 +111,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-
 const dropdownItems = document.querySelectorAll('.dropdown-item');
 dropdownItems.forEach(item => {
     item.addEventListener('click', () => {
@@ -148,40 +118,39 @@ dropdownItems.forEach(item => {
         const difficulty = item.dataset.difficulty; 
         const mode = item.dataset.mode; 
 
-        if (item.dataset.difficulty === currentDifficulty) return;
-        if (item.dataset.mode === currentMode) return;
 
-        if (difficulty)syncDifficultyUI(item); 
+        if (difficulty === state.currentDifficulty || mode === state.currentMode) return;
+        if (difficulty) syncDifficultyUI(item); 
         if (mode) syncModeUI(item); 
 
-        menu.classList.remove('show')
-    })
-})
+        menu.classList.remove('show');
+    });
+});
 
 const testWpmElement = document.getElementById('wpm'); 
 const testAccuracyElement = document.getElementById('accuracy');
 const testTimeElement = document.getElementById('time'); 
-
 const restartContainerEl = document.getElementById('restart-container'); 
 const restartTestBtnEl = document.getElementById('restart-test-btn'); 
 const resultsIconEl = document.querySelector(".results-screen #results-icon");
 const textDisplayEl = document.getElementById('text-display');
+const finalAccuracyEl = document.querySelector('#final-accuracy'); 
 
 function resetStats() {
-    wpm = 0; 
-    accuracy = 100;
-    incorrectCount = 0; 
-    typedCount = 0;
-    if (timer) {
-        clearInterval(timer);
-        timer = null;
+    state.wpm = 0; 
+    state.accuracy = 100;
+    state.incorrectCount = 0; 
+    state.typedCount = 0;
+
+    if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
     }
 
     testWpmElement.textContent = 0;
     testAccuracyElement.textContent = "100%";
-    testTimeElement.textContent = currentMode === "timed" ? "0:60" : "∞";
-    
-    // Reset colors
+    testTimeElement.textContent = state.currentMode === "timed" ? "0:60" : "∞";
+
     resultsIconEl.classList.remove("completed-border");
 
     const starOverlayEl = document.getElementById('stars-overlay');
@@ -192,7 +161,7 @@ function resetStats() {
 }
 
 function loadRandomTest() {
-    const possibleTests = textsData[currentDifficulty]; 
+    const possibleTests = textsData[state.currentDifficulty]; 
     const randomIndex = Math.floor(Math.random() * possibleTests.length);
     const randomText = possibleTests[randomIndex].text;
 
@@ -203,39 +172,39 @@ function loadRandomTest() {
         const span = document.createElement('span'); 
         span.textContent = char; 
         textDisplayEl.append(span); 
-    })
-    
+    });
+
     const spans = document.querySelectorAll('#text-display span');
     spans[0].classList.add('active-letter'); 
 }
 
-
 function startTest () {
-    ongoingTest = true;
+    state.ongoingTest = true;
 
     restartTestBtnEl.blur();
     restartContainerEl.classList.remove('hidden'); 
 
-    currentSpanNumber = 0; 
-    startTime = Date.now(); 
+    state.currentSpanNumber = 0; 
+    state.startTime = Date.now(); 
 
     document.querySelectorAll('.selection-btn').forEach(btn => {
         btn.classList.add('disabled'); 
-    })
-    wpmUpdater = setInterval(() => {
-        if (ongoingTest) {
-            const elapsedTimeInSeconds = (Date.now() - startTime) / 1000; 
-            const correctCount = typedCount - incorrectCount;
-            wpm = calculateWPM(correctCount, elapsedTimeInSeconds); 
-            testWpmElement.textContent = wpm; 
+    });
+
+    state.wpmUpdater = setInterval(() => {
+        if (state.ongoingTest) {
+            const elapsedTimeInSeconds = (Date.now() - state.startTime) / 1000; 
+            const correctCount = state.typedCount - state.incorrectCount;
+            state.wpm = calculateWPM(correctCount, elapsedTimeInSeconds); 
+            testWpmElement.textContent = state.wpm; 
         }
-    }, 1000)
-    // Initialize elements
+    }, 1000);
+
     testAccuracyElement.textContent = "100%";
-    if (currentMode === "timed") { 
-        testTimeElement.textContent = "0:60";
-        timer = setInterval(() => {
-            const elapsedTimeInSeconds = (Date.now() - startTime) / 1000;   
+    if (state.currentMode === "timed") { 
+        testTimeElement.textContent = `${formatTime(60)}`;
+        state.timer = setInterval(() => {
+            const elapsedTimeInSeconds = (Date.now() - state.startTime) / 1000;   
             const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
             testTimeElement.textContent = formatTime(remainingTime);
 
@@ -247,21 +216,19 @@ function startTest () {
                 testTimeElement.style.color = "hsl(0, 0%, 100%)"; // white
             }
 
-            if (remainingTime === 0 && ongoingTest) {
+            if (remainingTime === 0 && state.ongoingTest) {
                 finishTest(); 
             }
 
-        }, 1000)
+        }, 1000);
     } else {
         testTimeElement.textContent = "∞";
     }
 }
 
-const finalAccuracyEl = document.querySelector('#final-accuracy'); 
-
 function finishTest() {
     stopTimers(); 
-    ongoingTest = false;
+    state.ongoingTest = false;
     changeScreen();
     updateFinalStatsUI();
     updateAccuracyUI();
@@ -269,12 +236,9 @@ function finishTest() {
 }
 
 function updateAccuracyUI() {
-    finalAccuracyEl.classList.remove(
-        'accuracy-imperfect',
-        'accuracy-perfect'
-    );
+    finalAccuracyEl.classList.remove('accuracy-imperfect','accuracy-perfect');
 
-    if (accuracy === 100) {
+    if (state.accuracy === 100) {
         finalAccuracyEl.classList.add('accuracy-perfect');
     } else {
         finalAccuracyEl.classList.add('accuracy-imperfect');
@@ -286,38 +250,34 @@ function updateFinalStatsUI() {
     const finalCorrect = document.querySelector('#final-correct'); 
     const finalIncorrect = document.querySelector('#final-incorrect'); 
     
-    
-    finalWpm.textContent = wpm;
-    finalCorrect.textContent = typedCount - incorrectCount;
-    finalIncorrect.textContent = incorrectCount;
+    finalWpm.textContent = state.wpm;
+    finalCorrect.textContent = state.typedCount - state.incorrectCount;
+    finalIncorrect.textContent = state.incorrectCount;
 
-    document.querySelectorAll('.selection-btn').forEach(btn => {
-        btn.classList.remove('disabled'); 
-    })
-    
-    finalAccuracyEl.textContent = `${accuracy}%`; 
+    document.querySelectorAll('.selection-btn').forEach(btn => btn.classList.remove('disabled'));
 
+    finalAccuracyEl.textContent = `${state.accuracy}%`; 
 }
 
 function stopTimers() {
-    if (timer) {
-        clearInterval(timer); 
-        timer = null;
+    if (state.timer) {
+        clearInterval(state.timer); 
+        state.timer = null;
     }
-    if (wpmUpdater) {
-        clearInterval(wpmUpdater); 
-        wpmUpdater = null;
+    if (state.wpmUpdater) {
+        clearInterval(state.wpmUpdater); 
+        state.wpmUpdater = null;
     }
 }
 
 function changeScreen() {
     document.querySelector('.test-screen').classList.toggle('hidden');
-    document.querySelector('.results-screen').classList.toggle('hidden')
+    document.querySelector('.results-screen').classList.toggle('hidden');
 }
 
 function handleBestWPM() {
     const storedBest = getStoredBestWPM(); 
-    const isNewRecord = storedBest === null || wpm > storedBest;
+    const isNewRecord = storedBest === null || state.wpm > storedBest;
     
     if (isNewRecord) setBestWPM(); 
     
@@ -330,7 +290,7 @@ function handleBestWPM() {
             border: true
         });
         showStars();
-    } else if (wpm > storedBest) {
+    } else if (state.wpm > storedBest) {
         setResultsUI({
             icon: "assets/images/icon-new-pb.svg",
             header: "High score smashed!",
@@ -353,12 +313,12 @@ function handleBestWPM() {
 
 function updateBestWPMUI() {
     const bestWpmEl = document.querySelector("#best-wpm");
-    bestWpmEl.textContent = bestWPM !== null ? `${bestWPM} WPM` : "0 WPM";
+    bestWpmEl.textContent = state.bestWPM !== null ? `${state.bestWPM} WPM` : "0 WPM";
 }
 
 function setBestWPM() {
-    bestWPM = wpm;
-    setStoredBestWPM(bestWPM); 
+    state.bestWPM = state.wpm;
+    setStoredBestWPM(state.bestWPM); 
     updateBestWPMUI();
 }
 
@@ -374,14 +334,13 @@ function setResultsUI({icon, header, subheader, buttonText, border=false}) {
     newTestBtnEl.querySelector('span').textContent = buttonText; 
 }
 
-
 function showConfetti() {
     const confettiOverlayEl = document.getElementById('confetti-overlay');
     confettiOverlayEl.classList.add('show'); 
 
     setTimeout(() => {
         confettiOverlayEl.classList.remove('show'); 
-    }, 3000)
+    }, 3000);
 }
 
 function showStars() {
@@ -391,21 +350,20 @@ function showStars() {
 
 document.addEventListener('keydown', (e) => {
     const spans = document.querySelectorAll('#text-display span')
-    const currentSpan = spans[currentSpanNumber]; 
-    const previousSpan = spans[currentSpanNumber - 1]; 
+    const currentSpan = spans[state.currentSpanNumber]; 
+    const previousSpan = spans[state.currentSpanNumber - 1]; 
 
-    if (e.repeat) return; // Ignore key holds, because of a spacing bug that increases the wpm
-    if (!ongoingTest) return;
+    if (e.repeat) return; 
+    if (!state.ongoingTest) return;
     const ignoredKeys = ['Shift', 'Alt', 'Control', 'Tab', 'CapsLock', 'Meta', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
     if (ignoredKeys.includes(e.key)) return; 
 
     if (e.key === 'Backspace') {
-        if (currentSpanNumber === 0) return; 
+        if (state.currentSpanNumber === 0) return; 
         previousSpan?.classList.add('active-letter');
         currentSpan?.classList.remove('active-letter'); 
         previousSpan?.classList.remove('incorrect', 'correct');
-        currentSpanNumber--; 
-    
+        state.currentSpanNumber--; 
         return; 
     }
 
@@ -416,56 +374,46 @@ document.addEventListener('keydown', (e) => {
     } else {
         currentSpan?.classList.add('incorrect'); 
         currentSpan?.classList.remove('active-letter'); 
-        incorrectCount++; 
+        state.incorrectCount++; 
     }
 
     // If it's the last character, finish the test
-    if (currentSpanNumber === spans.length -1) {
-        finishTest()
+    if (state.currentSpanNumber === spans.length -1) {
+        finishTest();
         return; 
     }
-
-    // Statistics 
-
-    typedCount++;
-    // Accuracy
-    accuracy = calculateAccuracy(typedCount, incorrectCount); 
-    testAccuracyElement.textContent = `${accuracy}%`; 
+    // Statistics
+    state.typedCount++;
+    state.accuracy = calculateAccuracy(state.typedCount, state.incorrectCount); 
+    testAccuracyElement.textContent = `${state.accuracy}%`; 
 
     testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    if (accuracy === 100) {
+    if (state.accuracy === 100) {
         testAccuracyElement.classList.add('accuracy-perfect'); 
     } else {
-        testAccuracyElement.classList.add('accuracy-imperfect')
+        testAccuracyElement.classList.add('accuracy-imperfect');
     }
-    currentSpanNumber++; 
-    spans[currentSpanNumber]?.classList.add('active-letter'); 
-})
+    state.currentSpanNumber++; 
+    spans[state.currentSpanNumber]?.classList.add('active-letter'); 
+});
 
-
-/*
-Event listeners for buttons
-*/
+/* Event listeners for buttons */
 
 // Start test button on the start screen
-
-
-
 document.getElementById('start-test-container').addEventListener('click', ()=>{
     document.getElementById('start-test-container').classList.add('hidden'); 
-    startTest()
-})
+    startTest();
+});
 
 // Restart test button on the test screen
 document.getElementById('restart-test-btn').addEventListener('click',() => {
     loadRandomTest();
-    if (ongoingTest) startTest();
-})
+    if (state.ongoingTest) startTest();
+});
 
 // New test button on the results screen
 document.getElementById('new-test-btn').addEventListener('click', () => {
     loadRandomTest();
     changeScreen();
     document.getElementById('start-test-container').classList.remove('hidden'); 
-    
-})
+});
