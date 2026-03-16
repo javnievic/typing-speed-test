@@ -13,7 +13,8 @@ function handleTyping(e, state, DOM, finishTest) {
 
     if (e.repeat || !state.ongoingTest) return;
 
-    const ignoredKeys = ['Shift','Alt','Control','Tab','CapsLock','Meta','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
+    const ignoredKeys = ['Shift','Alt','Control','Tab','CapsLock','Meta','ArrowLeft','ArrowRight','ArrowUp',
+        'ArrowDown', 'F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12', 'Escape', 'Enter'];
     if (ignoredKeys.includes(e.key)) return; 
 
     if (e.key === 'Backspace') {
