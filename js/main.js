@@ -2,6 +2,7 @@ import { formatTime } from "./utils.js";
 import { getStoredBestWPM, setStoredBestWPM } from "./storage.js";
 import { calculateWPM, calculateAccuracy } from "./stats.js";
 import { state } from "./state.js";
+import { DOM } from "./dom.js"
 
 let textsData = {}; 
 
@@ -18,21 +19,19 @@ fetch('./data.json')
     });
 
 function initDifficultyButtons() {
-    document.querySelectorAll('.difficulty-options .selection-btn')
-        .forEach(btn => {
-            btn.addEventListener('click', () => {
-                syncDifficultyUI(btn);
-            });
+    DOM.difficulty.buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            syncDifficultyUI(btn);
         });
+    });
 }
 
 function initModeButtons() {
-    document.querySelectorAll('.mode-options .selection-btn')
-        .forEach(btn => {
-            btn.addEventListener('click', () => {
-                syncModeUI(btn); 
-            });
+    DOM.mode.buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            syncModeUI(btn); 
         });
+    });
 }
 
 function syncDifficultyUI(selectedBtn) {
@@ -41,24 +40,21 @@ function syncDifficultyUI(selectedBtn) {
 
     state.currentDifficulty = selectedBtn.dataset.difficulty; 
 
-    document.querySelectorAll('.difficulty-options .selection-btn')
-        .forEach(btn => {
-            btn.classList.toggle(
-                'active',
-                btn.dataset.difficulty === state.currentDifficulty
-            );
-        });
+    DOM.difficulty.buttons.forEach(btn => {
+        btn.classList.toggle(
+            'active',
+            btn.dataset.difficulty === state.currentDifficulty
+        );
+    });
 
-    document.querySelectorAll('#difficulty-dropdown .dropdown-item')
-        .forEach(item => {
-            item.classList.toggle(
-                'active',
-                item.dataset.difficulty === state.currentDifficulty
-            );
-        });
+    DOM.difficulty.dropdownItems.forEach(item => {
+        item.classList.toggle(
+            'active',
+            item.dataset.difficulty === state.currentDifficulty
+        );
+    });
 
-    const difficultyDropdownBtn = document.querySelector('#difficulty-dropdown-btn span');
-    difficultyDropdownBtn.textContent =
+    DOM.difficulty.dropdownLabel.textContent =
         state.currentDifficulty.charAt(0).toUpperCase() + state.currentDifficulty.slice(1);
 
     loadRandomTest();
@@ -70,33 +66,27 @@ function syncModeUI(selectedBtn) {
 
     state.currentMode = selectedBtn.dataset.mode;
 
-    // Desktop buttons
-    document.querySelectorAll('.mode-options .selection-btn')
-        .forEach(btn => {
-            btn.classList.toggle(
-                'active',
-                btn.dataset.mode === state.currentMode
-            );
-        });
+    DOM.mode.buttons.forEach(btn => {
+        btn.classList.toggle(
+            'active',
+            btn.dataset.mode === state.currentMode
+        );
+    });
 
-    // Dropdown items
-    document.querySelectorAll('#mode-dropdown .dropdown-item')
-        .forEach(item => {
-            item.classList.toggle(
-                'active',
-                item.dataset.mode === state.currentMode
-            );
-        });
+    DOM.mode.dropdownItems.forEach(item => {
+        item.classList.toggle(
+            'active',
+            item.dataset.mode === state.currentMode
+        );
+    });
 
-    // Dropdown label
-    const modeDropdownBtn = document.querySelector('#mode-dropdown-btn span');
-    modeDropdownBtn.textContent =
+    DOM.mode.dropdownLabel.textContent =
         state.currentMode.charAt(0).toUpperCase() + state.currentMode.slice(1);
 
     resetStats(); 
 }
 
-const dropdownBtns = document.querySelectorAll(".dropdown-btn"); 
+const dropdownBtns = DOM.dropdown.buttons; 
 dropdownBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const menu = btn.nextElementSibling; 
@@ -106,18 +96,15 @@ dropdownBtns.forEach(btn => {
 
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown-menu')
-        .forEach(menu => menu.classList.remove('show'));
+      DOM.dropdown.menus.forEach(menu => menu.classList.remove('show'));
   }
 });
 
-const dropdownItems = document.querySelectorAll('.dropdown-item');
-dropdownItems.forEach(item => {
+DOM.dropdown.items.forEach(item => {
     item.addEventListener('click', () => {
         const menu = item.closest(".dropdown-menu");
         const difficulty = item.dataset.difficulty; 
         const mode = item.dataset.mode; 
-
 
         if (difficulty === state.currentDifficulty || mode === state.currentMode) return;
         if (difficulty) syncDifficultyUI(item); 
@@ -126,15 +113,6 @@ dropdownItems.forEach(item => {
         menu.classList.remove('show');
     });
 });
-
-const testWpmElement = document.getElementById('wpm'); 
-const testAccuracyElement = document.getElementById('accuracy');
-const testTimeElement = document.getElementById('time'); 
-const restartContainerEl = document.getElementById('restart-container'); 
-const restartTestBtnEl = document.getElementById('restart-test-btn'); 
-const resultsIconEl = document.querySelector(".results-screen #results-icon");
-const textDisplayEl = document.getElementById('text-display');
-const finalAccuracyEl = document.querySelector('#final-accuracy'); 
 
 function resetStats() {
     state.wpm = 0; 
@@ -147,17 +125,15 @@ function resetStats() {
         state.timer = null;
     }
 
-    testWpmElement.textContent = 0;
-    testAccuracyElement.textContent = "100%";
-    testTimeElement.textContent = state.currentMode === "timed" ? "0:60" : "∞";
+    DOM.stats.wpm.textContent = 0;
+    DOM.stats.accuracy.textContent = "100%";
+    DOM.stats.time.textContent = state.currentMode === "timed" ? "0:60" : "∞";
 
-    resultsIconEl.classList.remove("completed-border");
+    DOM.results.icon.classList.remove("completed-border");
+    DOM.overlays.stars.classList.remove('show');
 
-    const starOverlayEl = document.getElementById('stars-overlay');
-    starOverlayEl.classList.remove('show');
-
-    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    testTimeElement.style.color = "hsl(0, 0%, 100%)"; 
+    DOM.stats.accuracy.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
+    DOM.stats.time.style.color = "hsl(0, 0%, 100%)"; 
 }
 
 function loadRandomTest() {
@@ -166,28 +142,28 @@ function loadRandomTest() {
     const randomText = possibleTests[randomIndex].text;
 
     resetStats(); 
-    textDisplayEl.innerHTML=""; 
+    DOM.test.textDisplay.innerHTML=""; 
 
     randomText.split('').forEach(char => {
         const span = document.createElement('span'); 
         span.textContent = char; 
-        textDisplayEl.append(span); 
+        DOM.test.textDisplay.append(span); 
     });
 
-    const spans = document.querySelectorAll('#text-display span');
+    const spans = DOM.test.textDisplay.querySelectorAll('span');
     spans[0].classList.add('active-letter'); 
 }
 
 function startTest () {
     state.ongoingTest = true;
 
-    restartTestBtnEl.blur();
-    restartContainerEl.classList.remove('hidden'); 
+    DOM.test.restartBtn.blur();
+    DOM.test.restartContainer.classList.remove('hidden'); 
 
     state.currentSpanNumber = 0; 
     state.startTime = Date.now(); 
 
-    document.querySelectorAll('.selection-btn').forEach(btn => {
+    DOM.buttons.selection.forEach(btn => {
         btn.classList.add('disabled'); 
     });
 
@@ -196,24 +172,25 @@ function startTest () {
             const elapsedTimeInSeconds = (Date.now() - state.startTime) / 1000; 
             const correctCount = state.typedCount - state.incorrectCount;
             state.wpm = calculateWPM(correctCount, elapsedTimeInSeconds); 
-            testWpmElement.textContent = state.wpm; 
+            DOM.stats.wpm.textContent = state.wpm; 
         }
     }, 1000);
 
-    testAccuracyElement.textContent = "100%";
+    DOM.stats.accuracy.textContent = "100%";
+
     if (state.currentMode === "timed") { 
-        testTimeElement.textContent = `${formatTime(60)}`;
+        DOM.stats.time.textContent = `${formatTime(60)}`;
         state.timer = setInterval(() => {
             const elapsedTimeInSeconds = (Date.now() - state.startTime) / 1000;   
             const remainingTime = Math.max(60 - Math.floor(elapsedTimeInSeconds), 0); 
-            testTimeElement.textContent = formatTime(remainingTime);
+            DOM.stats.time.textContent = formatTime(remainingTime);
 
             if (remainingTime <= 5) {
-                testTimeElement.style.color = "hsl(354, 63%, 57%)"; // red
+                DOM.stats.time.style.color = "hsl(354, 63%, 57%)";
             } else if (remainingTime <= 45) {
-                testTimeElement.style.color = "hsl(49, 85%, 70%)"; // yellow
+                DOM.stats.time.style.color = "hsl(49, 85%, 70%)";
             } else {
-                testTimeElement.style.color = "hsl(0, 0%, 100%)"; // white
+                DOM.stats.time.style.color = "hsl(0, 0%, 100%)";
             }
 
             if (remainingTime === 0 && state.ongoingTest) {
@@ -221,8 +198,9 @@ function startTest () {
             }
 
         }, 1000);
+
     } else {
-        testTimeElement.textContent = "∞";
+        DOM.stats.time.textContent = "∞";
     }
 }
 
@@ -236,43 +214,34 @@ function finishTest() {
 }
 
 function updateAccuracyUI() {
-    finalAccuracyEl.classList.remove('accuracy-imperfect','accuracy-perfect');
+    DOM.results.finalAccuracy.classList.remove('accuracy-imperfect','accuracy-perfect');
 
     if (state.accuracy === 100) {
-        finalAccuracyEl.classList.add('accuracy-perfect');
+        DOM.results.finalAccuracy.classList.add('accuracy-perfect');
     } else {
-        finalAccuracyEl.classList.add('accuracy-imperfect');
+        DOM.results.finalAccuracy.classList.add('accuracy-imperfect');
     }
 }
 
 function updateFinalStatsUI() {
-    const finalWpm = document.querySelector('#final-wpm'); 
-    const finalCorrect = document.querySelector('#final-correct'); 
-    const finalIncorrect = document.querySelector('#final-incorrect'); 
-    
-    finalWpm.textContent = state.wpm;
-    finalCorrect.textContent = state.typedCount - state.incorrectCount;
-    finalIncorrect.textContent = state.incorrectCount;
+    DOM.results.finalWpm.textContent = state.wpm;
+    DOM.results.finalCorrect.textContent = state.typedCount - state.incorrectCount;
+    DOM.results.finalIncorrect.textContent = state.incorrectCount;
 
-    document.querySelectorAll('.selection-btn').forEach(btn => btn.classList.remove('disabled'));
+    DOM.buttons.selection.forEach(btn => btn.classList.remove('disabled'));
 
-    finalAccuracyEl.textContent = `${state.accuracy}%`; 
+    DOM.results.finalAccuracy.textContent = `${state.accuracy}%`; 
 }
 
 function stopTimers() {
-    if (state.timer) {
-        clearInterval(state.timer); 
-        state.timer = null;
-    }
-    if (state.wpmUpdater) {
-        clearInterval(state.wpmUpdater); 
-        state.wpmUpdater = null;
-    }
+    if (state.timer) clearInterval(state.timer);
+    if (state.wpmUpdater) clearInterval(state.wpmUpdater);
+    state.timer = state.wpmUpdater = null;
 }
 
 function changeScreen() {
-    document.querySelector('.test-screen').classList.toggle('hidden');
-    document.querySelector('.results-screen').classList.toggle('hidden');
+    DOM.screens.test.classList.toggle('hidden');
+    DOM.screens.results.classList.toggle('hidden');
 }
 
 function handleBestWPM() {
@@ -312,8 +281,8 @@ function handleBestWPM() {
 }
 
 function updateBestWPMUI() {
-    const bestWpmEl = document.querySelector("#best-wpm");
-    bestWpmEl.textContent = state.bestWPM !== null ? `${state.bestWPM} WPM` : "0 WPM";
+    DOM.stats.bestWpm.textContent =
+        state.bestWPM !== null ? `${state.bestWPM} WPM` : "0 WPM";
 }
 
 function setBestWPM() {
@@ -323,39 +292,30 @@ function setBestWPM() {
 }
 
 function setResultsUI({icon, header, subheader, buttonText, border=false}) {
-    const resultsHeaderEl = document.querySelector(".results-header h1");
-    const resultsSubheaderEl = document.querySelector(".results-header p");
-    const newTestBtnEl = document.getElementById('new-test-btn'); 
-
-    resultsIconEl.src = icon; 
-    resultsIconEl.classList.toggle("completed-border", border);
-    resultsHeaderEl.textContent = header; 
-    resultsSubheaderEl.textContent = subheader; 
-    newTestBtnEl.querySelector('span').textContent = buttonText; 
+    DOM.results.icon.src = icon; 
+    DOM.results.icon.classList.toggle("completed-border", border);
+    DOM.results.header.textContent = header; 
+    DOM.results.subheader.textContent = subheader; 
+    DOM.results.newTestBtn.querySelector('span').textContent = buttonText; 
 }
 
 function showConfetti() {
-    const confettiOverlayEl = document.getElementById('confetti-overlay');
-    confettiOverlayEl.classList.add('show'); 
-
-    setTimeout(() => {
-        confettiOverlayEl.classList.remove('show'); 
-    }, 3000);
+    DOM.overlays.confetti.classList.add('show'); 
+    setTimeout(() => DOM.overlays.confetti.classList.remove('show'), 3000);
 }
 
 function showStars() {
-    const starOverlayEl = document.getElementById('stars-overlay');
-    starOverlayEl.classList.add('show');
+    DOM.overlays.stars.classList.add('show');
 }
 
 document.addEventListener('keydown', (e) => {
-    const spans = document.querySelectorAll('#text-display span')
+    const spans = DOM.test.textDisplay.querySelectorAll('span');
     const currentSpan = spans[state.currentSpanNumber]; 
     const previousSpan = spans[state.currentSpanNumber - 1]; 
 
-    if (e.repeat) return; 
-    if (!state.ongoingTest) return;
-    const ignoredKeys = ['Shift', 'Alt', 'Control', 'Tab', 'CapsLock', 'Meta', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+    if (e.repeat || !state.ongoingTest) return;
+
+    const ignoredKeys = ['Shift','Alt','Control','Tab','CapsLock','Meta','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
     if (ignoredKeys.includes(e.key)) return; 
 
     if (e.key === 'Backspace') {
@@ -367,7 +327,6 @@ document.addEventListener('keydown', (e) => {
         return; 
     }
 
-    // Check if the pressed key matches the current character
     if(currentSpan?.textContent === e.key) {
         currentSpan?.classList.add('correct'); 
         currentSpan?.classList.remove('active-letter'); 
@@ -382,38 +341,34 @@ document.addEventListener('keydown', (e) => {
         finishTest();
         return; 
     }
-    // Statistics
+
+    // Statistics updates
     state.typedCount++;
     state.accuracy = calculateAccuracy(state.typedCount, state.incorrectCount); 
-    testAccuracyElement.textContent = `${state.accuracy}%`; 
+    DOM.stats.accuracy.textContent = `${state.accuracy}%`; 
+    DOM.stats.accuracy.classList.remove('accuracy-imperfect','accuracy-perfect'); 
+    DOM.stats.accuracy.classList.add(state.accuracy === 100 ? 'accuracy-perfect' : 'accuracy-imperfect');
 
-    testAccuracyElement.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
-    if (state.accuracy === 100) {
-        testAccuracyElement.classList.add('accuracy-perfect'); 
-    } else {
-        testAccuracyElement.classList.add('accuracy-imperfect');
-    }
     state.currentSpanNumber++; 
     spans[state.currentSpanNumber]?.classList.add('active-letter'); 
 });
-
 /* Event listeners for buttons */
 
 // Start test button on the start screen
-document.getElementById('start-test-container').addEventListener('click', ()=>{
-    document.getElementById('start-test-container').classList.add('hidden'); 
+DOM.test.startContainer.addEventListener('click', ()=>{
+    DOM.test.startContainer.classList.add('hidden'); 
     startTest();
 });
 
 // Restart test button on the test screen
-document.getElementById('restart-test-btn').addEventListener('click',() => {
+DOM.test.restartBtn.addEventListener('click',() => {
     loadRandomTest();
     if (state.ongoingTest) startTest();
 });
 
 // New test button on the results screen
-document.getElementById('new-test-btn').addEventListener('click', () => {
+DOM.results.newTestBtn.addEventListener('click', () => {
     loadRandomTest();
     changeScreen();
-    document.getElementById('start-test-container').classList.remove('hidden'); 
+    DOM.test.startContainer.classList.remove('hidden'); 
 });
