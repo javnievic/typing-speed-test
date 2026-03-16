@@ -1,8 +1,9 @@
 import { formatTime } from "./utils.js";
 import { getStoredBestWPM, setStoredBestWPM } from "./storage.js";
-import { calculateWPM, calculateAccuracy } from "./stats.js";
+import { calculateWPM } from "./stats.js";
 import { state } from "./state.js";
 import { DOM } from "./dom.js"
+import { initTypingListener } from "./inputHandler.js"
 
 let textsData = {}; 
 
@@ -134,6 +135,8 @@ function resetStats() {
 
     DOM.stats.accuracy.classList.remove('accuracy-imperfect', 'accuracy-perfect'); 
     DOM.stats.time.style.color = "hsl(0, 0%, 100%)"; 
+
+    DOM.test.restartContainer.classList.add('hidden'); 
 }
 
 function loadRandomTest() {
@@ -249,36 +252,43 @@ function handleBestWPM() {
     const isNewRecord = storedBest === null || state.wpm > storedBest;
     
     if (isNewRecord) setBestWPM(); 
-    
-    if (storedBest === null) {
-        setResultsUI({
+
+    const resultData = {
+        baseline: {
             icon: "assets/images/icon-completed.svg",
             header: "Baseline Established",
             subheader: "You've set the bar. Now the real challenge begins—time to beat it.",
             buttonText: "Beat This Score",
             border: true
-        });
-        showStars();
-    } else if (state.wpm > storedBest) {
-        setResultsUI({
+        }, 
+        newRecord: {
             icon: "assets/images/icon-new-pb.svg",
             header: "High score smashed!",
             subheader: "You're getting faster. That was incredibly typing.",
             buttonText: "Beat This Score",
             border: false
-        });
-        showConfetti();
-    } else {
-        setResultsUI({
+        },
+        normal: {
             icon: "assets/images/icon-completed.svg",
             header: "Test Complete!",
             subheader: "Solid run. Keep pushing to beat your high score.",
             buttonText: "Go again",
             border: true
-        });
+        }
+    }; 
+    
+    if (storedBest === null) {
+        setResultsUI(resultData.baseline);
+        showStars();
+    } else if (state.wpm > storedBest) {
+        setResultsUI(resultData.newRecord);
+        showConfetti();
+    } else {
+        setResultsUI(resultData.normal);
         showStars();
     }
 }
+
 
 function updateBestWPMUI() {
     DOM.stats.bestWpm.textContent =
@@ -308,50 +318,8 @@ function showStars() {
     DOM.overlays.stars.classList.add('show');
 }
 
-document.addEventListener('keydown', (e) => {
-    const spans = DOM.test.textDisplay.querySelectorAll('span');
-    const currentSpan = spans[state.currentSpanNumber]; 
-    const previousSpan = spans[state.currentSpanNumber - 1]; 
+initTypingListener(state, DOM, finishTest); 
 
-    if (e.repeat || !state.ongoingTest) return;
-
-    const ignoredKeys = ['Shift','Alt','Control','Tab','CapsLock','Meta','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'];
-    if (ignoredKeys.includes(e.key)) return; 
-
-    if (e.key === 'Backspace') {
-        if (state.currentSpanNumber === 0) return; 
-        previousSpan?.classList.add('active-letter');
-        currentSpan?.classList.remove('active-letter'); 
-        previousSpan?.classList.remove('incorrect', 'correct');
-        state.currentSpanNumber--; 
-        return; 
-    }
-
-    if(currentSpan?.textContent === e.key) {
-        currentSpan?.classList.add('correct'); 
-        currentSpan?.classList.remove('active-letter'); 
-    } else {
-        currentSpan?.classList.add('incorrect'); 
-        currentSpan?.classList.remove('active-letter'); 
-        state.incorrectCount++; 
-    }
-
-    // If it's the last character, finish the test
-    if (state.currentSpanNumber === spans.length -1) {
-        finishTest();
-        return; 
-    }
-
-    // Statistics updates
-    state.typedCount++;
-    state.accuracy = calculateAccuracy(state.typedCount, state.incorrectCount); 
-    DOM.stats.accuracy.textContent = `${state.accuracy}%`; 
-    DOM.stats.accuracy.classList.remove('accuracy-imperfect','accuracy-perfect'); 
-    DOM.stats.accuracy.classList.add(state.accuracy === 100 ? 'accuracy-perfect' : 'accuracy-imperfect');
-
-    state.currentSpanNumber++; 
-    spans[state.currentSpanNumber]?.classList.add('active-letter'); 
-});
 /* Event listeners for buttons */
 
 // Start test button on the start screen
