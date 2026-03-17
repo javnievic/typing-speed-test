@@ -175,8 +175,12 @@ function startTest () {
     state.startTime = Date.now(); 
 
     DOM.buttons.selection.forEach(btn => {
-        btn.classList.add('disabled'); 
+        btn.classList.add('disabled');
     });
+
+    DOM.dropdown.buttons.forEach(btn => {
+        btn.classList.add('disabled'); 
+    })
 
     state.wpmUpdater = setInterval(() => {
         if (state.ongoingTest) {
@@ -240,6 +244,7 @@ function updateFinalStatsUI() {
     DOM.results.finalIncorrect.textContent = state.incorrectCount;
 
     DOM.buttons.selection.forEach(btn => btn.classList.remove('disabled'));
+    DOM.dropdown.buttons.forEach(btn => btn.classList.remove('disabled'));
 
     DOM.results.finalAccuracy.textContent = `${state.accuracy}%`; 
 }

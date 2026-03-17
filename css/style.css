@@ -136,7 +136,8 @@ header.navbar {
   border-color: var(--color-primary-hover);
 }
 
-.selection-btn.disabled {
+.selection-btn.disabled, 
+.dropdown-btn.disabled {
   pointer-events: none;
   color: inherit !important;
   border-color: inherit !important;
