@@ -13,9 +13,13 @@ function handleTyping(e, state, DOM, finishTest) {
 
     if (e.repeat || !state.ongoingTest) return;
 
-    const ignoredKeys = ['Shift','Alt','Control','Tab','CapsLock','Meta','ArrowLeft','ArrowRight','ArrowUp',
-        'ArrowDown', 'F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12', 'Escape', 'Enter'];
-    if (ignoredKeys.includes(e.key)) return; 
+    const ignoredKeys = new Set( [
+        'Shift','Alt','Control','Tab','CapsLock','Meta',
+        'ArrowLeft','ArrowRight','ArrowUp','ArrowDown',
+        'F1','F2','F3','F4','F5','F6','F7','F8','F9','F10',
+        'F11','F12', 'Escape', 'Enter'
+    ]);
+    if (ignoredKeys.has(e.key)) return; 
 
     if (e.key === 'Backspace') {
         if (state.currentSpanNumber === 0) return; 
@@ -23,6 +27,7 @@ function handleTyping(e, state, DOM, finishTest) {
         currentSpan?.classList.remove('active-letter'); 
         previousSpan?.classList.remove('incorrect', 'correct');
         state.currentSpanNumber--; 
+        previousSpan.scrollIntoView({ behavior: 'smooth'});
         return; 
     }
 
@@ -36,7 +41,7 @@ function handleTyping(e, state, DOM, finishTest) {
     }
 
     // If it's the last character, finish the test
-    if (state.currentSpanNumber === spans.length -1) {
+    if (state.currentSpanNumber === spans.length - 1) {
         finishTest();
         return; 
     }
@@ -49,6 +54,12 @@ function handleTyping(e, state, DOM, finishTest) {
     DOM.stats.accuracy.classList.add(state.accuracy === 100 ? 'accuracy-perfect' : 'accuracy-imperfect');
 
     state.currentSpanNumber++; 
-    spans[state.currentSpanNumber]?.classList.add('active-letter'); 
+    
+    const nextSpan = spans[state.currentSpanNumber];
+    nextSpan?.classList.add('active-letter');
 
+    // Scroll only if the span is out of view
+    if (nextSpan) {
+        nextSpan.scrollIntoView({ behavior: 'smooth'});
+    }
 }

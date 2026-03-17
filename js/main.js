@@ -155,6 +155,14 @@ function loadRandomTest() {
 
     const spans = DOM.test.textDisplay.querySelectorAll('span');
     spans[0].classList.add('active-letter'); 
+
+    // force scroll the first span into view after DOM render
+    requestAnimationFrame(() => {
+        spans[0].scrollIntoView({
+            block: "start",
+            behavior: "instant"
+        });
+    });
 }
 
 function startTest () {
